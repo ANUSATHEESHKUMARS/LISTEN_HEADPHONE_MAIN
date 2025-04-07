@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.productName %> - Details</title>
+    <link rel="stylesheet" href="/user/tailwindcss/output.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        /* Your existing styles */
+    </style>
+</head>
+<body class="bg-gray-500">
+    <%- include("../partials/nav") %>
+
+    <main class="min-h-screen pt-20 pb-12">
+        <!-- Breadcrumb -->
+        <nav class="max-w-7xl mx-auto px-4 py-4">
+            <ol class="flex items-center space-x-2 text-sm">
+                <li><a href="/" class="text-gray-900 hover:text-gray-900">Home</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><a href="/shop" class="text-gray-900 hover:text-gray-900">Shop</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li class="text-gray-900 font-medium"><%= product.productName %></li>
+            </ol>
+        </nav>
+
+        <!-- Product Details -->
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Left: Image Gallery -->
+                    <div class="space-y-4">
+                        <!-- Main Image -->
+                        <div class="relative">
+                            <div class="main-image-container">
+                                <img 
+                                    id="mainImage"
+                                    src="<%= product.imageUrl[0] %>"
+                                    alt="<%= product.productName %>"
+                                    class="w-full h-auto transition-transform duration-200"
+                                />
+                                
+                                <!-- Wishlist Button -->
+                                <button 
+                                    onclick="toggleWishlist('<%= product._id %>', this)"
+                                    class="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:bg-white transition-all duration-300"
+                                >
+                                    <i class="far fa-heart text-2xl text-gray-800 hover:text-red-500 transition-colors"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnails -->
+                        <div class="thumbnail-scroll flex space-x-4 overflow-x-auto py-2">
+                            <% product.imageUrl.forEach((image, index) => { %>
+                                <button 
+                                    onclick="updateMainImage('<%= image %>', this)"
+                                    class="thumbnail-btn flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 
+                                           <%= index === 0 ? 'border-gray-900' : 'border-transparent' %> 
+                                           hover:border-gray-900 transition-all"
+                                >
+                                    <img 
+                                        src="<%= image %>"
+                                        alt="Product view <%= index + 1 %>"
+                                        class="w-full h-full object-cover"
+                                    />
+                                </button>
+                            <% }) %>
+                        </div>
+                    </div>
+
+                    <!-- Right: Product Info -->
+                    <div class="space-y-6">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900"><%= product.productName %></h1>
+                            <p class="text-gray-500 mt-2"><%= product.description %></p>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="space-y-2">
+                            <div class="flex items-baseline gap-3">
+                                <span class="text-4xl font-bold text-gray-900">
+                                    ₹<%= Number(product.discountPrice || product.price).toLocaleString('en-IN') %>
+                                </span>
+                                <% if (product.discountPrice && product.originalPrice && product.discountPrice < product.originalPrice) { %>
+                                    <span class="text-xl text-gray-400 line-through">
+                                        ₹<%= Number(product.originalPrice).toLocaleString('en-IN') %>
+                                    </span>
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        <%= Math.round((product.originalPrice - product.discountPrice) / product.originalPrice * 100) %>% OFF
+                                    </span>
+                                <% } %>
+                            </div>
+                        </div>
+                        <!-- Stock Status -->
+                        <div>
+                            <% if (product.stock > 0) { %>
+                                <div class="text-green-600 flex items-center gap-2">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>In Stock (<%= product.stock %> available)</span>
+                                </div>
+                            <% } else { %>
+                                <div class="text-red-600 flex items-center gap-2">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Out of Stock</span>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-lg font-semibold mb-4">Product Details</h3>
+                            <dl class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <dt class="text-sm text-gray-500">Category</dt>
+                                    <dd class="text-sm font-medium text-gray-900">
+                                        <% if (product.categoriesId && product.categoriesId.name) { %>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                                <%= product.categoriesId.name %>
+                                            </span>
+                                        <% } else { %>
+                                            Not specified
+                                        <% } %>
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm text-gray-500">Type</dt>
+                                    <dd class="text-sm font-medium text-gray-900">
+                                        <% if (product.type) { %>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                                <%= product.type %>
+                                            </span>
+                                        <% } else { %>
+                                            Not specified
+                                        <% } %>
+                                    </dd>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <dt class="text-sm text-gray-500">Description</dt>
+                                    <dd class="text-sm font-medium text-gray-900 mt-1"><%= product.description %></dd>
+                                </div>
+                            </dl>
+                        </div>
+                        
+                        <!-- Actions --> 
+                        <div class="space-y-4 pt-6">
+                            <% if (product.stock > 0) { %>
+                                <button 
+                                    onclick="addToCart('<%= product._id %>')"
+                                    class="w-full py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Add to Cart
+                                </button>
+                                <button 
+                                    onclick="buyNow('<%= product._id %>')"
+                                    class="w-full py-4 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <i class="fas fa-bolt"></i>
+                                    Buy Now
+                                </button>
+                            <% } %>
+                            <button 
+                                onclick="toggleWishlist('<%= product._id %>', this)"
+                                class="w-full py-4 bg-white text-gray-900 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <i class="far fa-heart"></i>
+                                Add to Wishlist
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        <section class="max-w-7xl mx-auto px-4 mt-16 mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <% if (relatedProducts && relatedProducts.length > 0) { %>
+                    <% relatedProducts.forEach(function(product) { %>
+                        <div class="group relative">
+                            <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+                                <!-- Image Container -->
+                                <a href="/product/<%= product._id %>" class="block">
+                                    <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden">
+                                        <img 
+                                            src="<%= product.imageUrl[0] %>" 
+                                            alt="<%= product.productName %>"
+                                            class="h-64 w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                    </div>
+                                </a>
+                                
+                                <!-- Product Info -->
+                                <div class="p-4">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
+                                        <%= product.productName %>
+                                    </h3>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-xl font-bold text-gray-900">
+                                            ₹<%= Number(product.price).toLocaleString('en-IN') %>
+                                        </p>
+                                        
+                                        <a 
+                                            href="/product/<%= product._id %>"
+                                            class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                                        >
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="col-span-full text-center text-gray-500">No related products found</p>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+    <%- include("../partials/footer") %>
+
+    <script>
+        // Image zoom functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.main-image-container');
+            const mainImage = document.getElementById('mainImage');
+            
+            if (!container || !mainImage) return;
+
+            let isZoomed = false;
+            const zoomLevel = 2;
+
+            container.addEventListener('mousemove', function(e) {
+                if (!isZoomed) return;
+
+                const rect = container.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / container.offsetWidth * 100;
+                const y = (e.clientY - rect.top) / container.offsetHeight * 100;
+
+                mainImage.style.transformOrigin = `${x}% ${y}%`;
+            });
+
+            container.addEventListener('mouseenter', function() {
+                isZoomed = true;
+                mainImage.style.transform = `scale(${zoomLevel})`;
+            });
+
+            container.addEventListener('mouseleave', function() {
+                isZoomed = false;
+                mainImage.style.transform = 'scale(1)';
+            });
+        });
+
+        // Function to update main image
+        function updateMainImage(imageUrl, thumbnailElement) {
+            const mainImage = document.getElementById('mainImage');
+            if (!mainImage) return;
+
+            mainImage.src = imageUrl;
+
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('border-2', 'border-black');
+            });
+            thumbnailElement.classList.add('border-2', 'border-black');
+        }
+
+        async function addToCart(productId) {
+            try {
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId, quantity: 1 })
+                });
+
+                // Check if response is redirecting to login page
+                if (response.status === 401 || response.redirected) {
+                    window.location.href = '/user/login';
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added to Cart!',
+                        text: data.message,
+                        showCancelButton: true,
+                        confirmButtonText: 'Go to Cart',
+                        cancelButtonText: 'Continue Shopping'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/cart';
+                        }
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                // If error is due to authentication, redirect to login
+                if (error.message.includes('<!DOCTYPE')) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please login to add items to cart'
+                });
+            }
+        }
+
+        async function buyNow(productId) {
+            try {
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId, quantity: 1 })
+                });
+
+                // Check if response is redirecting to login page
+                if (response.status === 401 || response.redirected) {
+                    window.location.href = '/user/login';
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/checkout';
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                // If error is due to authentication, redirect to login
+                if (error.message.includes('<!DOCTYPE')) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please login to continue with purchase'
+                });
+            }
+        }
+
+        async function toggleWishlist(productId, button) {
+            try {
+                const response = await fetch('/wishlist/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId })
+                });
+
+                // Check if user is not authenticated (status 401) or response is redirecting
+                if (response.status === 401 || response.redirected) {
+                    window.location.href = '/user/login'; // Redirect to login page
+                    return;
+                }
+
+                // Only try to parse JSON if the response is ok
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update all wishlist icons on the page
+                    const wishlistIcons = document.querySelectorAll('.fa-heart');
+                    
+                    if (data.added) {
+                        wishlistIcons.forEach(icon => {
+                            icon.classList.remove('far');
+                            icon.classList.add('fas', 'text-red-500');
+                        });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to Wishlist',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    } else {
+                        wishlistIcons.forEach(icon => {
+                            icon.classList.remove('fas', 'text-red-500');
+                            icon.classList.add('far');
+                        });
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Removed from Wishlist',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                } else {
+                    throw new Error('Failed to update wishlist');
+                }
+            } catch (error) {
+                // If the error contains HTML (redirect to login page), handle it
+                if (error.message.includes('<!DOCTYPE')) {
+                    window.location.href = '/user/login';
+                    return;
+                }
+                
+                // For other errors, show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please login to add items to wishlist'
+                });
+            }
+        }
+
+        // Check initial wishlist status when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const productId = '<%= product._id %>';
+                const response = await fetch(`/wishlist/check/${productId}`);
+                
+                // Check for authentication issues
+                if (response.status === 401 || response.redirected) {
+                    // Don't redirect, just don't update the wishlist icon
+                    return;
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.inWishlist) {
+                        const wishlistIcons = document.querySelectorAll('.fa-heart');
+                        wishlistIcons.forEach(icon => {
+                            icon.classList.remove('far');
+                            icon.classList.add('fas', 'text-red-500');
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking wishlist status:', error);
+            }
+        });
+    </script>
+
+    <style>
+        .main-image-container {
+            position: relative;
+            overflow: hidden;
+            cursor: zoom-in;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #mainImage {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease-out;
+        }
+
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .thumbnail {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</body>
+</html>

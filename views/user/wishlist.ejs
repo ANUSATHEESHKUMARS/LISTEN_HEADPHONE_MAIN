@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist</title>
+    <link rel="stylesheet" href="/user/tailwindcss/output.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Include Navigation -->
+    <%- include('../partials/nav') %>
+
+    <div class="container mx-auto px-4 py-8 mt-28">
+        <h1 class="text-3xl font-bold mb-8">My Wishlist</h1>
+
+        <% if (wishlistItems && wishlistItems.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <% wishlistItems.forEach(item => { %>
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden" id="wishlist-item-<%= item.productId._id %>">
+                        <img src="<%= item.productId.imageUrl[0] %>" 
+                             alt="<%= item.productId.productName %>" 
+                             class="w-full h-64 object-cover"/>
+                        
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold mb-2"><%= item.productId.productName %></h3>
+                            
+                            <!-- Price Display -->
+                            <div class="mb-4">
+                                <% if (item.productId.discountPrice && item.productId.discountPrice < item.productId.price) { %>
+                                    <div class="flex items-baseline gap-2">
+                                        <span class="text-lg font-bold text-gray-900">
+                                            ₹<%= item.productId.discountPrice.toLocaleString() %>
+                                        </span>
+                                        <span class="text-sm text-gray-500 line-through">
+                                            ₹<%= item.productId.price.toLocaleString() %>
+                                        </span>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-lg font-bold text-gray-900">
+                                        ₹<%= item.productId.price.toLocaleString() %>
+                                    </p>
+                                <% } %>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button onclick="addToCart('<%= item.productId._id %>')" 
+                                        class="flex-1 bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                                    Add to Cart
+                                </button>
+                                <button onclick="removeFromWishlist('<%= item.productId._id %>')"
+                                        class="px-3 py-2 text-red-500 hover:text-red-600 transition-colors">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="text-center py-12">
+                <i class="fas fa-heart text-4xl text-gray-400 mb-4"></i>
+                <p class="text-gray-500 mb-4">Your wishlist is empty</p>
+                <a href="/shop" class="inline-block bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800">
+                    Continue Shopping
+                </a>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <!-- Include Footer -->
+    <%- include('../partials/footer') %>
+
+    <script>
+        async function addToCart(productId) {
+            try {
+                const loadingId = showToast('loading', 'Adding to cart...');
+                
+                // First add to cart
+                const cartResponse = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        productId,
+                        quantity: 1
+                    })
+                });
+
+                const cartData = await cartResponse.json();
+                
+                if (cartResponse.ok) {
+                    // If successfully added to cart, remove from wishlist
+                    const wishlistResponse = await fetch(`/wishlist/remove/${productId}`, {
+                        method: 'DELETE'
+                    });
+
+                    const wishlistData = await wishlistResponse.json();
+                    removeToast(loadingId);
+
+                    if (wishlistResponse.ok) {
+                        // Remove the item from the wishlist UI
+                        const item = document.getElementById(`wishlist-item-${productId}`);
+                        item.remove();
+                        
+                        showToast('success', 'Added to cart and removed from wishlist');
+                        
+                        // Check if wishlist is now empty and reload if necessary
+                        if (document.querySelectorAll('[id^="wishlist-item-"]').length === 0) {
+                            window.location.reload();
+                        }
+                    } else {
+                        // If wishlist removal fails, still show cart success but with a warning
+                        showToast('success', 'Added to cart but failed to remove from wishlist');
+                    }
+                } else {
+                    removeToast(loadingId);
+                    throw new Error(cartData.message || 'Failed to add to cart');
+                }
+            } catch (error) {
+                removeToast(loadingId);
+                showToast('error', error.message || 'Failed to process request');
+            }
+        }
+
+        async function removeFromWishlist(productId) {
+            try {
+                const loadingId = showToast('loading', 'Removing from wishlist...');
+                
+                const response = await fetch(`/wishlist/remove/${productId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                removeToast(loadingId);
+
+                if (response.ok) {
+                    const item = document.getElementById(`wishlist-item-${productId}`);
+                    item.remove();
+                    
+                    showToast('success', 'Removed from wishlist');
+                    
+                    // Reload if wishlist is empty
+                    if (document.querySelectorAll('[id^="wishlist-item-"]').length === 0) {
+                        window.location.reload();
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                showToast('error', error.message || 'Failed to remove from wishlist');
+            }
+        }
+
+        function showToast(type, message) {
+            const toastContainer = document.getElementById('toast-container');
+            const id = Date.now();
+            
+            const toast = document.createElement('div');
+            toast.id = `toast-${id}`;
+            toast.className = `${getToastColorClass(type)} p-4 rounded-lg shadow-lg flex items-center gap-2 min-w-[300px]`;
+            
+            toast.innerHTML = `
+                ${getToastIcon(type)}
+                <span class="flex-1">${message}</span>
+                ${type !== 'loading' ? '<button onclick="removeToast(' + id + ')" class="text-sm">&times;</button>' : ''}
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            if (type !== 'loading') {
+                setTimeout(() => removeToast(id), 3000);
+            }
+            
+            return id;
+        }
+
+        function removeToast(id) {
+            const toast = document.getElementById(`toast-${id}`);
+            if (toast) {
+                toast.remove();
+            }
+        }
+
+        function getToastColorClass(type) {
+            switch (type) {
+                case 'success': return 'bg-green-500 text-white';
+                case 'error': return 'bg-red-500 text-white';
+                case 'loading': return 'bg-blue-500 text-white';
+                default: return 'bg-gray-500 text-white';
+            }
+        }
+
+        function getToastIcon(type) {
+            switch (type) {
+                case 'success': return '<i class="fas fa-check-circle"></i>';
+                case 'error': return '<i class="fas fa-exclamation-circle"></i>';
+                case 'loading': return '<i class="fas fa-spinner fa-spin"></i>';
+                default: return '<i class="fas fa-info-circle"></i>';
+            }
+        }
+    </script>
+</body>
+</html>

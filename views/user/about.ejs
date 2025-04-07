@@ -1,0 +1,207 @@
+<!-- views/about.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>About Us - Listen Headphones</title>
+        <link rel="stylesheet" href="../user/tailwindcss/output.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+            integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+    </head>
+<body class="bg-gray-50">
+    <%- include("../partials/nav") %>
+
+<!-- Hero Section with Carousel -->
+<div class="relative h-[300px] overflow-hidden">
+    <!-- Carousel Container -->
+    <div class="carousel-container h-full">
+        <!-- Slide 1 -->
+        <div class="carousel-slide absolute w-full h-full transition-opacity duration-500">
+            <img src="/images/kardkfksdf.jpg" alt="Premium Headphones" class="w-full h-full object-cover">
+        </div>
+        <!-- Slide 2 -->
+        <div class="carousel-slide absolute w-full h-full transition-opacity duration-500">
+            <img src="/images/nookii.jpg" alt="Quality Audio" class="w-full h-full object-cover">
+        </div>
+        <!-- Slide 3 -->
+        <div class="carousel-slide absolute w-full h-full transition-opacity duration-500">
+            <img src="/images/rredasd.jpg" alt="Perfect Sound" class="w-full h-full object-cover">
+        </div>
+
+        <!-- Overlay Text (Stays constant) -->
+        <div class="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+            <div class="text-center text-white">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">About Listen Headphones</h1>
+                <p class="text-lg md:text-xl">Your Premium Audio Destination</p>
+            </div>
+        </div>
+
+        <!-- Carousel Navigation Dots -->
+        <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+            <button class="w-2 h-2 rounded-full bg-white opacity-50 carousel-dot"></button>
+            <button class="w-2 h-2 rounded-full bg-white opacity-50 carousel-dot"></button>
+            <button class="w-2 h-2 rounded-full bg-white opacity-50 carousel-dot"></button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .carousel-slide {
+        opacity: 0;
+    }
+    .carousel-slide.active {
+        opacity: 1;
+    }
+    .carousel-dot.active {
+        opacity: 1;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelectorAll('.carousel-slide');
+        const dots = document.querySelectorAll('.carousel-dot');
+        let currentSlide = 0;
+
+        // Function to show specific slide
+        function showSlide(index) {
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+            });
+
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+        }
+
+        // Initialize first slide
+        showSlide(0);
+
+        // Auto advance slides
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 3000); // Change slide every 3 seconds
+
+        // Add click handlers for dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
+            });
+        });
+    });
+</script>
+
+    <!-- Our Story Section -->
+    <div class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <img src="\images\sresessh.jpg" alt="Our Store" class="rounded-lg shadow-lg w-3/4">
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold mb-6">Our Story</h2>
+                    <p class="text-gray-600 mb-6">
+                        Listen Headphones started with a simple mission: to provide premium audio experiences to everyone. 
+                        We understand that finding the perfect headphones is a personal journey, and we're here to guide 
+                        you every step of the way.
+                    </p>
+                    <p class="text-gray-600">
+                        Our carefully curated selection of headphones and audio accessories represents the best in sound 
+                        quality, comfort, and style. Whether you're an audiophile, music enthusiast, or casual listener, 
+                        we have the perfect pair waiting for you.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why Choose Us -->
+    <div class="bg-gray-100 py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Why Choose Us?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Quality -->
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-check text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-4">Premium Quality</h3>
+                    <p class="text-gray-600 text-center">
+                        We offer only the finest selection of headphones from trusted brands.
+                    </p>
+                </div>
+
+                <!-- Expert Advice -->
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-headset text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-4">Expert Advice</h3>
+                    <p class="text-gray-600 text-center">
+                        Our knowledgeable team helps you find your perfect audio match.
+                    </p>
+                </div>
+
+                <!-- Customer Service -->
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-heart text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-4">Customer First</h3>
+                    <p class="text-gray-600 text-center">
+                        Your satisfaction is our top priority, with excellent support and service.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Our Commitment -->
+    <div class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6">Our Commitment</h2>
+                    <p class="text-gray-600 mb-6">
+                        We believe that everyone deserves to experience their music in the best possible way. 
+                        That's why we're committed to:
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <i class="fas fa-circle-check text-black mr-3"></i>
+                            <span class="text-gray-600">Offering only authentic, high-quality products</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-circle-check text-black mr-3"></i>
+                            <span class="text-gray-600">Providing honest, expert advice</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-circle-check text-black mr-3"></i>
+                            <span class="text-gray-600">Ensuring excellent customer service</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-circle-check text-black mr-3"></i>
+                            <span class="text-gray-600">Maintaining competitive prices</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <img src="\images\djfkskdofk.jpg" alt="Our Commitment" class="rounded-lg shadow-lg w-full">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../partials/footer") %>
+</body>
+</html>

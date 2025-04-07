@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Update the path to match your actual folder structure -->
+    <link rel="stylesheet" href="../user/tailwindcss/output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>Shop Page</title>
+</head>
+
+  <body class="bg-gray-500">
+    <%- include("../partials/nav") %>
+    <div class="mt-16"></div>
+
+    <!-- Breadcrumb -->
+    <div class="bg-gray-500 pt-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <!-- Home Link -->
+            <li class="inline-flex items-center">
+              <a href="/home" 
+                 class="inline-flex items-center text-sm font-medium text-gray-900 hover:text-gray-900">
+                <i class="fas fa-home mr-2"></i>
+                Home
+              </a>
+            </li>
+            <!-- Separator -->
+            <li>
+              <div class="flex items-center">
+                <i class="fas fa-chevron-right text-gray-900 text-sm mx-2"></i>
+                <span class="text-sm font-medium text-gray-900">Shop</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+<!-- Page Content -->
+<div class="bg-gray-500">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row gap-8 mt-8">
+      <!-- Left Sidebar - Filters -->
+      <div class="md:w-1/4">
+        <div class="sticky top-4 bg-white p-6 rounded-lg shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+          <div class="space-y-4">
+            <!-- Sort Filter -->
+            <div>
+              <label for="sortFilter" class="block text-gray-700 font-medium mb-2">Sort By</label>
+              <select id="sortFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900">
+                <option value="">Default</option>
+                <option value="priceLowToHigh">Price: Low to High</option>
+                <option value="priceHighToLow">Price: High to Low</option>
+                <option value="nameAZ">Name: A to Z</option>
+                <option value="nameZA">Name: Z to A</option>
+              </select>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Price Range</label>
+              <div class="flex gap-2">
+                <input 
+                  type="number" 
+                  id="minPrice" 
+                  placeholder="Min" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900"
+                  min="0"
+                >
+                <input 
+                  type="number" 
+                  id="maxPrice" 
+                  placeholder="Max" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900"
+                  min="0"
+                >
+              </div>
+            </div>
+
+            <!-- Stock Filter -->
+            <div>
+              <label for="stockFilter" class="block text-gray-700 font-medium mb-2">Stock Status</label>
+              <select id="stockFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900">
+                <option value="">All Products</option>
+                <option value="inStock">In Stock</option>
+                <option value="outOfStock">Out of Stock</option>
+              </select>
+            </div>
+
+            <!-- Category Filter -->
+            <div>
+              <label for="categoryFilter" class="block text-gray-700 font-medium mb-2">Category</label>
+              <select id="categoryFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900">
+                <option value="">All Categories</option>
+                <% if (categories && categories.length > 0) { %>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category._id %>" 
+                                <%= filters.category === category._id.toString() ? 'selected' : '' %>>
+                            <%= category.name %>
+                        </option>
+                    <% }); %>
+                <% } %>
+              </select>
+            </div>
+
+            <!-- Reset Button -->
+            <button 
+              id="resetFilters"
+              class="w-full mt-4 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Reset Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side Content -->
+      <div class="md:w-3/4">
+        <!-- Search Bar -->
+        <div class="mb-6">
+          <div class="flex items-center">
+            <input type="text" id="searchInput" class="flex-1 h-10 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-2 focus:border-gray-900" placeholder="Search products...">
+            <button id="searchButton" class="h-10 px-6 bg-zinc-800 text-white rounded-r-lg hover:bg-zinc-700 transition-colors">
+              Search
+            </button>
+          </div>
+        </div>
+
+            <!-- Product Grid -->
+            <div class="grid grid-cols-3 gap-6">
+              <% if (products && products.length > 0) { %>
+                  <% products.forEach(product => { %>
+                      <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+                          <!-- Product Image Container -->
+                          <div class="relative aspect-square overflow-hidden">
+                              <img 
+                                  src="<%= product.imageUrl[0] %>" 
+                                  alt="<%= product.productName %>"
+                                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-300 <%= product.stock === 0 ? 'opacity-60' : '' %>"
+                                  loading="lazy"
+                              >
+
+                              <!-- Wishlist Button -->
+                              <button 
+                                  onclick="toggleWishlist('<%= product._id %>', this)"
+                                  class="absolute top-3 right-3 z-10 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white transition-all duration-300"
+                              >
+                                  <i class="far fa-heart text-gray-800 hover:text-red-500 transition-colors"></i>
+                              </button>
+
+                              <!-- Offer Badge -->
+                              <% if (product.offerApplied) { %>
+                                  <div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                      <%= product.discountPercentage %>% OFF
+                                  </div>
+                              <% } %>
+                          </div>
+
+                          <!-- Product Info -->
+                          <div class="p-4">
+                              <h2 class="text-gray-800 text-lg font-medium truncate mb-2">
+                                  <%= product.productName %>
+                              </h2>
+
+                              <!-- Price Display -->
+                              <div class="flex items-baseline gap-2 mb-3">
+                                  <% if (product.offerApplied) { %>
+                                      <span class="text-xl font-bold text-gray-900">₹<%= product.discountPrice %></span>
+                                      <span class="text-sm text-gray-500 line-through">₹<%= product.price %></span>
+                                  <% } else { %>
+                                      <span class="text-xl font-bold text-gray-900">₹<%= product.price %></span>
+                                  <% } %>
+                              </div>
+
+                              <!-- View Details Button -->
+                              <a href="/product/<%= product._id %>" 
+                                 class="block w-full text-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                                  View Details
+                              </a>
+
+                              <!-- Offer End Date -->
+                              <% if (product.offerApplied && product.appliedOffer) { %>
+                                  <div class="mt-2 text-xs text-red-600">
+                                      Ends: <%= new Date(product.appliedOffer.endDate).toLocaleDateString() %>
+                                  </div>
+                              <% } %>
+                          </div>
+                      </div>
+                  <% }); %>
+              <% } else { %>
+                  <div class="col-span-3 text-center py-8">
+                      <p class="text-gray-500">No products available</p>
+                  </div>
+              <% } %>
+          </div>
+            <div class="mt-8 flex justify-center items-center space-x-4">
+              <button id="prevPage" class="px-4 py-2 bg-zinc-800 text-white rounded-lg disabled:opacity-50">Previous</button>
+              <span class="text-gray-700">
+                Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+              </span>
+              <button id="nextPage" class="px-4 py-2 bg-zinc-800 text-white rounded-lg disabled:opacity-50">Next</button>
+            </div>
+          </div>
+        
+      </div>
+    </div>
+
+    <!-- Added margin/padding before footer -->
+    <div class="pb-16"></div>
+
+    <%- include("../partials/footer") %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const searchInput = document.getElementById('searchInput');
+          const sortFilter = document.getElementById('sortFilter');
+          const minPriceInput = document.getElementById('minPrice');
+          const maxPriceInput = document.getElementById('maxPrice');
+          const stockFilter = document.getElementById('stockFilter');
+          const categoryFilter = document.getElementById('categoryFilter');
+          const resetButton = document.getElementById('resetFilters');
+
+          // Function to apply filters
+          async function applyFilters(page = 1) {
+              try {
+                  const params = new URLSearchParams({
+                      page: page,
+                      search: searchInput.value,
+                      sort: sortFilter.value,
+                      minPrice: minPriceInput.value,
+                      maxPrice: maxPriceInput.value,
+                      stock: stockFilter.value,
+                      category: categoryFilter.value
+                  });
+
+                  // Remove empty params
+                  for (const [key, value] of params.entries()) {
+                      if (!value) params.delete(key);
+                  }
+
+                  const response = await fetch(`/shop?${params.toString()}`, {
+                      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                  });
+
+                  if (!response.ok) throw new Error('Failed to fetch products');
+
+                  const data = await response.json();
+                  updateProductGrid(data.products);
+                  updatePagination(data.pagination);
+                  
+                  // Update URL without reloading the page
+                  window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
+              } catch (error) {
+                  console.error('Error applying filters:', error);
+                  showToast('error', 'Failed to load products');
+              }
+          }
+
+          // Function to update URL with current filters
+          function updateURL(params) {
+              const newURL = `${window.location.pathname}?${params.toString()}`;
+              window.history.pushState({ path: newURL }, '', newURL);
+          }
+
+          // Event listeners for filters
+          searchInput.addEventListener('input', debounce(() => applyFilters(), 500));
+          sortFilter.addEventListener('change', () => applyFilters());
+          stockFilter.addEventListener('change', () => applyFilters());
+          categoryFilter.addEventListener('change', () => applyFilters(1));
+
+          // Price filter with debounce
+          [minPriceInput, maxPriceInput].forEach(input => {
+              input.addEventListener('input', debounce(() => applyFilters(), 500));
+          });
+
+          // Reset filters
+          resetButton.addEventListener('click', function() {
+              searchInput.value = '';
+              sortFilter.value = '';
+              minPriceInput.value = '';
+              maxPriceInput.value = '';
+              stockFilter.value = '';
+              categoryFilter.value = '';
+              applyFilters(1);
+          });
+
+          // Debounce function
+          function debounce(func, wait) {
+              let timeout;
+              return function executedFunction(...args) {
+                  const later = () => {
+                      clearTimeout(timeout);
+                      func(...args);
+                  };
+                  clearTimeout(timeout);
+                  timeout = setTimeout(later, wait);
+              };
+          }
+
+          // Function to update product grid
+          function updateProductGrid(products) {
+              const productGrid = document.querySelector('.grid-cols-3');
+              if (!productGrid) return;
+
+              productGrid.innerHTML = products.length ? products.map(product => `
+                  <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+                      <!-- Product Image Container -->
+                      <div class="relative aspect-square overflow-hidden">
+                          <img 
+                              src="${product.imageUrl[0]}" 
+                              alt="${product.productName}"
+                              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300 ${product.stock === 0 ? 'opacity-60' : ''}"
+                              loading="lazy"
+                          >
+
+                          <!-- Wishlist Button -->
+                          <button 
+                              onclick="toggleWishlist('${product._id}', this)"
+                              class="absolute top-3 right-3 z-10 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white transition-all duration-300"
+                          >
+                              <i class="far fa-heart text-gray-800 hover:text-red-500 transition-colors"></i>
+                          </button>
+
+                          ${product.offerApplied ? `
+                              <div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                  ${product.discountPercentage}% OFF
+                              </div>
+                          ` : ''}
+                      </div>
+
+                      <!-- Product Info -->
+                      <div class="p-4">
+                          <h2 class="text-gray-800 text-lg font-medium truncate mb-2">
+                              ${product.productName}
+                          </h2>
+
+                          <div class="flex items-baseline gap-2 mb-3">
+                              ${product.offerApplied ? `
+                                  <span class="text-xl font-bold text-gray-900">₹${product.discountPrice}</span>
+                                  <span class="text-sm text-gray-500 line-through">₹${product.price}</span>
+                              ` : `
+                                  <span class="text-xl font-bold text-gray-900">₹${product.price}</span>
+                              `}
+                          </div>
+
+                          <a href="/product/${product._id}" 
+                             class="block w-full text-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                              View Details
+                          </a>
+
+                          ${product.offerApplied && product.appliedOffer ? `
+                              <div class="mt-2 text-xs text-red-600">
+                                  Ends: ${new Date(product.appliedOffer.endDate).toLocaleDateString()}
+                              </div>
+                          ` : ''}
+                      </div>
+                  </div>
+              `).join('') : `
+                  <div class="col-span-3 text-center py-8">
+                      <p class="text-gray-500">No products found</p>
+                  </div>
+              `;
+          }
+
+          // Function to update pagination
+          function updatePagination(pagination) {
+              const prevPageBtn = document.getElementById('prevPage');
+              const nextPageBtn = document.getElementById('nextPage');
+              const currentPageSpan = document.getElementById('currentPage');
+              const totalPagesSpan = document.getElementById('totalPages');
+
+              if (prevPageBtn) prevPageBtn.disabled = !pagination.hasPrevPage;
+              if (nextPageBtn) nextPageBtn.disabled = !pagination.hasNextPage;
+              if (currentPageSpan) currentPageSpan.textContent = pagination.currentPage;
+              if (totalPagesSpan) totalPagesSpan.textContent = pagination.totalPages;
+          }
+
+          // Add pagination event listeners
+          const prevPageBtn = document.getElementById('prevPage');
+          const nextPageBtn = document.getElementById('nextPage');
+
+          prevPageBtn.addEventListener('click', () => {
+              const currentPage = parseInt(document.getElementById('currentPage').textContent);
+              if (currentPage > 1) {
+                  applyFilters(currentPage - 1);
+              }
+          });
+
+          nextPageBtn.addEventListener('click', () => {
+              const currentPage = parseInt(document.getElementById('currentPage').textContent);
+              const totalPages = parseInt(document.getElementById('totalPages').textContent);
+              if (currentPage < totalPages) {
+                  applyFilters(currentPage + 1);
+              }
+          });
+
+          // Initial load of filters from URL
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.toString()) {
+              searchInput.value = urlParams.get('search') || '';
+              sortFilter.value = urlParams.get('sort') || '';
+              minPriceInput.value = urlParams.get('minPrice') || '';
+              maxPriceInput.value = urlParams.get('maxPrice') || '';
+              stockFilter.value = urlParams.get('stock') || '';
+              categoryFilter.value = urlParams.get('category') || '';
+              
+              const page = parseInt(urlParams.get('page')) || 1;
+              applyFilters(page);
+          }
+      });
+
+      async function toggleWishlist(productId, button) {
+          try {
+              const response = await fetch('/wishlist/toggle', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ productId })
+              });
+
+              if (response.status === 401) {
+                  window.location.href = '/login';
+                  return;
+              }
+
+              const data = await response.json();
+              
+              if (response.ok) {
+                  const icon = button.querySelector('i');
+                  
+                  if (data.added) {
+                      icon.classList.remove('far');
+                      icon.classList.add('fas', 'text-red-500');
+                      showToast('success', 'Added to wishlist');
+                  } else {
+                      icon.classList.remove('fas', 'text-red-500');
+                      icon.classList.add('far');
+                      showToast('info', 'Removed from wishlist');
+                  }
+              }
+          } catch (error) {
+              console.error('Error:', error);
+              showToast('error', 'Something went wrong!');
+          }
+      }
+
+      // Toast notification function
+      function showToast(type, message) {
+          const toast = document.createElement('div');
+          toast.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+              type === 'success' ? 'bg-green-500' :
+              type === 'error' ? 'bg-red-500' :
+              'bg-blue-500'
+          } text-white`;
+          toast.textContent = message;
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 3000);
+      }
+
+      // Check initial wishlist status for all products
+      document.addEventListener('DOMContentLoaded', async function() {
+          const productCards = document.querySelectorAll('[data-product-id]');
+          for (const card of productCards) {
+              const productId = card.dataset.productId;
+              try {
+                  const response = await fetch(`/wishlist/check/${productId}`);
+                  const data = await response.json();
+                  
+                  if (data.inWishlist) {
+                      const icon = card.querySelector('.fa-heart');
+                      icon.classList.remove('far');
+                      icon.classList.add('fas', 'text-red-500');
+                  }
+              } catch (error) {
+                  console.error('Error checking wishlist status:', error);
+              }
+          }
+      });
+      </script>
+  </body>
+</html>
+

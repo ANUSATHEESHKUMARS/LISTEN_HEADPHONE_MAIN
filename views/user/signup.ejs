@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="tailwindcss/output.css" />
+    <title>User Signup</title>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    />
+    
+    <!-- Add these styles in the head -->
+    <style>
+        .bg-image {
+            background-image: url('/images/firstpic.jpg'); /* Update with your image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .animate-form {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-300">
+    <!-- Add background image and overlay -->
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+
+    <!-- Centered Signup Card -->
+    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md p-8 bg-white/90 backdrop-blur-sm shadow-2xl rounded-lg animate-form">
+            <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">Create an Account</h2>
+
+            <!-- Signup Form -->
+            <form action="/signup" method="post" id="signup-form" class="space-y-4" novalidate>
+                <!-- First Name Input -->
+                <div>
+                    <input
+                        type="text"
+                        name="firstName"
+                        placeholder="First Name"
+                        id="firstName"
+                        class="w-full p-3 rounded-lg bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        minlength="3"
+                        maxlength="50"
+                        required
+                    />
+                    <p id="firstNameError" class="text-red-600 text-xs mt-1 hidden"></p>
+                </div>
+
+                <!-- Last Name Input -->
+                <div>
+                    <input
+                        type="text"
+                        name="lastName"
+                        placeholder="Last Name"
+                        id="lastName"
+                        class="w-full p-3 rounded-lg bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        minlength="1"
+                        maxlength="50"
+                        required
+                    />
+                    <p id="lastNameError" class="text-red-600 text-xs mt-1 hidden"></p>
+                </div>
+
+                <!-- Email Input -->
+                <div>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        id="email"
+                        class="w-full p-3 rounded-lg bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        required
+                    />
+                    <p id="emailError" class="text-red-600 text-xs mt-1 hidden"></p>
+                </div>
+
+                <!-- Password Input -->
+                <div class="relative">
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        id="password"
+                        class="w-full p-3 rounded-lg bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        minlength="8"
+                        maxlength="12"
+                        required
+                    />
+                    <button type="button" class="absolute right-3 top-3 text-gray-600">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                    <p id="passwordError" class="text-red-600 text-xs mt-1 hidden"></p>
+                </div>
+
+                <!-- Confirm Password Input -->
+                <div class="relative">
+                    <input
+                        type="password"
+                        name="confirmPassword"
+                        placeholder="Confirm Password"
+                        id="confirmPassword"
+                        class="w-full p-3 rounded-lg bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        minlength="8"
+                        maxlength="12"
+                        required
+                    />
+                    <button type="button" class="absolute right-3 top-3 text-gray-600">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                    <p id="confirmPasswordError" class="text-red-600 text-xs mt-1 hidden"></p>
+                </div>
+
+                <!-- Login Links -->
+                <div class="flex justify-between text-sm text-gray-600">
+                    <a href="/user/login" class="hover:text-gray-900 transition-colors">Already have an account? Login</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                    type="submit"
+                    class="w-full py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-[1.02]"
+                >
+                    Sign Up
+                </button>
+            </form>
+
+            <!-- General Error Message -->
+            <p id="generalError" class="text-red-600 text-xs mt-2 text-center"></p>
+
+            <!-- Google Sign in -->
+            <div id="google-auth-div" class="mt-6">
+                <div class="relative flex items-center justify-center my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative text-sm text-gray-600 bg-white/90 px-4">
+                        Or continue with Google
+                    </div>
+                </div>
+                <a href="/auth/google?trigger=signup" 
+                   class="flex items-center justify-center p-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors">
+                    <i class="fa-brands fa-google fa-lg text-red-600 mr-2"></i>
+                    <span class="text-gray-700">Sign up with Google</span>
+                </a>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div class="bg-white p-5 rounded-lg flex flex-col items-center">
+                    <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-3"></div>
+                    <p class="text-gray-700">Sending OTP...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Modal -->
+    <div id="otpModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+            <h3 class="text-xl font-semibold mb-4">Enter OTP</h3>
+            <p class="text-sm text-gray-600 mb-4">Please enter the OTP sent to your email</p>
+
+            <!-- OTP Error Message -->
+            <p id="otpError" class="text-red-600 text-xs mt-1 mb-3 hidden"></p>
+
+            <div class="flex gap-2 mb-4">
+                <input type="text" maxlength="1" class="otp-input w-12 h-12 text-center border-2 rounded-lg" />
+                <input type="text" maxlength="1" class="otp-input w-12 h-12 text-center border-2 rounded-lg" />
+                <input type="text" maxlength="1" class="otp-input w-12 h-12 text-center border-2 rounded-lg" />
+                <input type="text" maxlength="1" class="otp-input w-12 h-12 text-center border-2 rounded-lg" />
+                <input type="text" maxlength="1" class="otp-input w-12 h-12 text-center border-2 rounded-lg" />
+                <input type="text" maxlength="1" class="otp-input w-12 h-12 text-center border-2 rounded-lg" />
+            </div>
+
+            <button id="verifyOtp" class="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200">
+                Verify OTP
+            </button>
+
+            <div class="text-center mt-4">
+                <button id="resendOtp" class="text-blue-600 hover:underline">Resend OTP</button>
+                <div id="resendTimer" class="text-sm text-gray-600 mt-1 hidden"></div>
+                <p id="resendMessage" class="text-red-600 text-xs mt-1 hidden"></p>
+            </div>
+
+            <!-- OTP Verification Loading Spinner -->
+            <div id="otp-loading-spinner" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div class="bg-white p-5 rounded-lg flex flex-col items-center">
+                    <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-3"></div>
+                    <p class="text-gray-700">Verifying OTP...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/javascript/user/signup.js" defer></script>
+</body>
+</html>

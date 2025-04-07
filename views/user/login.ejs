@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/output.css" />
+    <title>User Login</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com" />
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    />
+    
+    <style>
+        .bg-image {
+            background-image: url('/images/firstpic.jpg'); /* Update with your image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+            z-index: -1;
+        }
+
+        .animate-form {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Image -->
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+
+    <!-- Centered Login Card -->
+    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md p-8 bg-white/90 backdrop-blur-sm shadow-2xl rounded-lg animate-form">
+            <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">Welcome Back</h2>
+
+            <!-- Login Form -->
+            <form action="/login" method="post" class="space-y-4" novalidate>
+                <!-- Email Input -->
+                <div>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        id="email"
+                        class="w-full p-3 rounded-lg bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        required
+                    />
+                    <p id="emailError" class="text-red-600 text-xs mt-1 hidden"></p>
+                </div>
+
+                <!-- Password Input -->
+                <div class="relative">
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        id="password"
+                        class="w-full p-3 rounded-lg bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        required
+                    />
+                    <button type="button" class="absolute right-3 top-3 text-gray-600">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                    <p id="passwordError" class="text-red-600 text-xs mt-1 hidden"></p>
+                </div>
+
+                <!-- Sign up and Forgot Password Links -->
+                <div class="flex justify-between text-sm text-gray-600">
+                    <a href="/user/signup" class="hover:text-gray-900 transition-colors">Create an Account</a>
+                    <a href="/forgot-password" class="hover:text-gray-900 transition-colors">Forgot Password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                    class="w-full py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-[1.02]">
+                    Login
+                </button>
+            </form>
+
+            <!-- Google Sign in -->
+            <div class="relative flex items-center justify-center my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative text-sm text-gray-500 bg-white/90 px-4">
+                    Or continue with Google
+                </div>
+            </div>
+            
+            <a href="/auth/google?trigger=login" 
+               class="flex items-center justify-center p-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors">
+                <i class="fa-brands fa-google fa-lg text-red-600 mr-2"></i>
+                <span class="text-gray-700">Sign in with Google</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white p-5 rounded-lg flex flex-col items-center">
+            <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-3"></div>
+            <p class="text-gray-700">Logging in...</p>
+        </div>
+    </div>
+
+    <script>
+    // Your existing JavaScript remains unchanged
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const passwordToggle = document.querySelector('.fa-eye');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+        // Helper function to show error
+        const showError = (element, message) => {
+            element.textContent = message;
+            element.classList.remove('hidden');
+            element.previousElementSibling.classList.add('border-red-500');
+        };
+
+        const hideError = (element) => {
+            element.classList.add('hidden');
+            element.previousElementSibling.classList.remove('border-red-500');
+        };
+
+        document.getElementById('email').addEventListener('input', () => {
+            hideError(emailError);
+        });
+
+        document.getElementById('password').addEventListener('input', () => {
+            hideError(passwordError);
+        });
+
+        passwordToggle.addEventListener('click', function() {
+            const input = document.getElementById('password');
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            }
+        });
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            let hasErrors = false;
+
+            hideError(emailError);
+            hideError(passwordError);
+
+            if (!email) {
+                showError(emailError, 'Email is required');
+                hasErrors = true;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError(emailError, 'Please enter a valid email address');
+                hasErrors = true;
+            }
+
+            if (!password) {
+                showError(passwordError, 'Password is required');
+                hasErrors = true;
+            }
+
+            if (hasErrors) return;
+
+            loadingSpinner.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                loadingSpinner.classList.add('hidden');
+
+                if (data.success) {
+                    window.location.href = data.redirectUrl || '/home';
+                } else {
+                    if (data.message.toLowerCase().includes('email')) {
+                        showError(emailError, data.message);
+                    } else if (data.message.toLowerCase().includes('password')) {
+                        showError(passwordError, data.message);
+                    } else {
+                        showError(emailError, data.message);
+                    }
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                loadingSpinner.classList.add('hidden');
+                showError(emailError, 'Something went wrong. Please try again.');
+            }
+        });
+    });
+    </script>
+</body>
+</html>
