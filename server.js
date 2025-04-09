@@ -18,7 +18,7 @@ import helmet from "helmet";
 dotenv.config();
 
 const app = express();
-
+  
 connectDB();
 
 const initializeAdmin = async () => {

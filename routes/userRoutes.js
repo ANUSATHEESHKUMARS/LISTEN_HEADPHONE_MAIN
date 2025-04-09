@@ -152,6 +152,7 @@ route.get('/product/:id', productController.getProductDetails);
 route.get('/contact',authController.getContact)
 
 route.post('/wallet/recharge', walletController.initiateRecharge);
+
 route.post('/wallet/verify-recharge', walletController.verifyRecharge);
 
 export default route;

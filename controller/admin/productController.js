@@ -4,7 +4,6 @@
     import fs from 'fs';
     import upload from '../../utils/multer.js'
 
-    // Add these validation functions at the top of the file
     const validateProductName = (name) => {
         // Remove extra spaces and check length
         const trimmedName = name.trim();

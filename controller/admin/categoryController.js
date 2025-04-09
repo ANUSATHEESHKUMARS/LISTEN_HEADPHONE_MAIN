@@ -147,19 +147,19 @@ const categoryController = {
     // Toggle category status
     toggleCategory: async (req, res) => {
         try {
-            const { id } = req.query;
+            const { id } = req.query; // getting ID from query params
             const category = await Category.findById(id);
-
+    
             if (!category) {
                 return res.status(404).json({
                     success: false,
                     message: 'Category not found'
                 });
             }
-
+    
             category.isActive = !category.isActive;
             await category.save();
-
+    
             res.status(200).json({
                 success: true,
                 message: `Category ${category.isActive ? 'activated' : 'deactivated'} successfully`
@@ -172,6 +172,7 @@ const categoryController = {
             });
         }
     },
+    
 
     // Get category offers
     getCategoryOffers: async (req, res) => {

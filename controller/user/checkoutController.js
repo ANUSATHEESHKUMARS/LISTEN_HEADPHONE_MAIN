@@ -2,7 +2,7 @@ import cartSchema from '../../models/cartModels.js';
 import addressSchema from '../../models/addressModels.js';
 import productSchema from '../../models/productModel.js';
 import orderSchema from '../../models/orderModels.js';
-import couponSchema from '../../models/couponModel.js';
+// import couponSchema from '../../models/couponModel.js';
 import razorpay from '../../utils/razorpay.js';
 import crypto from 'crypto';
 import wallet from '../../models/walletModels.js';
@@ -963,6 +963,8 @@ const updateProductStock = async (productId, quantity) => {
         );
 
         console.log(`Stock updated for product ${productId}: ${updatedProduct.stock}`);
+
+        
         return updatedProduct;
     } catch (error) {
         console.error('Error updating stock:', error);
