@@ -36,7 +36,7 @@ const addAddress = async (req, res) => {
         });
 
         await address.save();
-        res.status(200).json({ message: 'Address added successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'Address added successfully' });
     } catch (error) {
         console.error('Error adding address:', error);
         res.status(400).json({ error: error.message });
@@ -46,7 +46,7 @@ const addAddress = async (req, res) => {
 const deleteAddress = async (req, res) => {
     try {
         await addressSchema.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'Address deleted successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'Address deleted successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -79,7 +79,7 @@ const editAddress = async (req, res) => {
             return res.status(404).json({ error: 'Address not found' });
         }
 
-        res.status(200).json({ message: 'Address updated successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'Address updated successfully' });
     } catch (error) {
         console.error('Error updating address:', error);
         res.status(400).json({ error: error.message });

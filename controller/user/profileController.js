@@ -53,7 +53,7 @@ const updateProfile = async (req, res) => {
             { new: true }
         );
 
-        res.status(200).json({ message: 'Profile updated successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'Profile updated successfully' });
     } catch (error) {
         console.error('Error updating profile:', error);
         res.status(500).json({ message: 'Error updating profile' });
@@ -89,7 +89,7 @@ const initiateEmailChange = async (req, res) => {
         // Send OTP email
         await sendOTPEmail(newEmail, otp);
 
-        res.status(200).json({ message: 'OTP sent successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'OTP sent successfully' });
     } catch (error) {
         console.error('Error initiating email change:', error);
         res.status(500).json({ message: 'Failed to send OTP' });
@@ -123,7 +123,7 @@ const verifyEmailOTP = async (req, res) => {
         // Clear email change session data
         delete req.session.emailChange;
 
-        res.status(200).json({ message: 'Email updated successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'Email updated successfully' });
     } catch (error) {
         console.error('Error verifying email OTP:', error);
         res.status(500).json({ message: 'Failed to verify OTP' });

@@ -12,17 +12,35 @@ const getWallet = async (req, res) => {
         let wallet = await Wallet.findOne({ userId });
         if (!wallet) {
             wallet = await Wallet.create({ userId });
-
         }
 
-        // get recent transactions 
-        const transactions = wallet.transactions.sort((a, b) => b.date - a.date);
+        // Pagination logic
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5; // Number of transactions per page
+        const skip = (page - 1) * limit;
 
+        // Get total number of transactions
+        const totalTransactions = wallet.transactions.length;
+        const totalPages = Math.ceil(totalTransactions / limit);
+
+        // Get paginated transactions
+        const transactions = wallet.transactions
+            .sort((a, b) => b.date - a.date)
+            .slice(skip, skip + limit);
+
+        // Calculate start and end index for display
+        const startIndex = skip;
+        const endIndex = Math.min(skip + limit, totalTransactions);
 
         res.render('user/wallet', {
             wallet,
             transactions,
-            user
+            user,
+            currentPage: page,
+            totalPages,
+            totalTransactions,
+            startIndex,
+            endIndex
         });
     } catch (error) {
         console.error('Get wallet error', error);
@@ -30,7 +48,6 @@ const getWallet = async (req, res) => {
             message: 'Error feteching wallet details',
             user: req.session.user
         });
-
     }
 };
 
@@ -55,7 +72,7 @@ const initiateRecharge = async (req, res) => {
 
         const razorpayOrder = await razorpay.orders.create(options);
 
-        res.status(200).json({
+        res.status(HTTP_STATUS.OK).json({
             success: true,
             key: process.env.RAZORPAY_KEY_ID,
             amount: options.amount,

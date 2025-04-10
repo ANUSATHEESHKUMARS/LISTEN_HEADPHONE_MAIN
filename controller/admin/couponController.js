@@ -1,11 +1,37 @@
 import Coupon from '../../models/couponModel.js'
+import { HTTP_STATUS } from "../../utils/httpStatusCodes.js";
+
 
 const adminCouponController = {
     // Get all coupons
     getCoupons: async (req, res) => {
         try {
-            const coupons = await Coupon.find().sort({ createdAt: -1 });
-            res.render('admin/coupon', { coupons });
+            const page = parseInt(req.query.page) || 1;
+            const limit = 5; // Number of coupons per page
+            const skip = (page - 1) * limit;
+
+            // Get total number of coupons
+            const totalCoupons = await Coupon.countDocuments();
+            const totalPages = Math.ceil(totalCoupons / limit);
+
+            // Get paginated coupons
+            const coupons = await Coupon.find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit);
+
+            // Calculate start and end index for display
+            const startIndex = skip;
+            const endIndex = Math.min(skip + limit, totalCoupons);
+
+            res.render('admin/coupon', { 
+                coupons,
+                currentPage: page,
+                totalPages,
+                totalCoupons,
+                startIndex,
+                endIndex
+            });
         } catch (error) {
             console.error('Error fetching coupons:', error);
             res.status(500).json({ message: 'Error fetching coupons' });
@@ -61,7 +87,7 @@ const adminCouponController = {
             });
 
             await newCoupon.save();
-            res.status(200).json({ message: 'Coupon added successfully' });
+            res.status(HTTP_STATUS.OK).json({ message: 'Coupon added successfully' });
         } catch (error) {
             console.error('Error adding coupon:', error);
             res.status(500).json({ message: 'Error adding coupon' });
@@ -131,7 +157,7 @@ const adminCouponController = {
                 return res.status(404).json({ message: 'Coupon not found' });
             }
 
-            res.status(200).json({ message: 'Coupon updated successfully' });
+            res.status(HTTP_STATUS.OK).json({ message: 'Coupon updated successfully' });
         } catch (error) {
             console.error('Error updating coupon:', error);
             res.status(500).json({ message: 'Error updating coupon' });
@@ -145,7 +171,7 @@ const adminCouponController = {
             if (!deletedCoupon) {
                 return res.status(404).json({ message: 'Coupon not found' });
             }
-            res.status(200).json({ message: 'Coupon deleted successfully' });
+            res.status(HTTP_STATUS.OK).json({ message: 'Coupon deleted successfully' });
         } catch (error) {
             console.error('Error deleting coupon:', error);
             res.status(500).json({ message: 'Error deleting coupon' });
@@ -163,7 +189,7 @@ const adminCouponController = {
             coupon.isActive = !coupon.isActive;
             await coupon.save();
 
-            res.status(200).json({ 
+            res.status(HTTP_STATUS.OK).json({ 
                 message: `Coupon ${coupon.isActive ? 'activated' : 'deactivated'} successfully` 
             });
         } catch (error) {

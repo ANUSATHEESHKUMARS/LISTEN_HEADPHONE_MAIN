@@ -356,7 +356,7 @@ const sendForgotPasswordOTP = async (req, res) => {
         // Send OTP email
         await sendOTPEmail(email, otp);
 
-        res.status(200).json({ message: 'OTP sent successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'OTP sent successfully' });
     } catch (error) {
         console.error('Send OTP error:', error);
         res.status(500).json({ message: 'Failed to send OTP' });
@@ -391,7 +391,7 @@ const verifyForgotPasswordOTP = async (req, res) => {
             return res.status(400).json({ message: 'Invalid OTP' });
         }
 
-        res.status(200).json({ message: 'OTP verified successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'OTP verified successfully' });
     } catch (error) {
         console.error('Verify OTP error:', error);
         res.status(500).json({ message: 'Failed to verify OTP' });
@@ -426,7 +426,7 @@ const resetPassword = async (req, res) => {
         req.session.user = user._id;
         req.session.userEmail = user.email;
 
-        res.status(200).json({ 
+        res.status(HTTP_STATUS.OK).json({ 
             message: 'Password reset successfully',
             redirectUrl: '/home'
         });
@@ -493,7 +493,7 @@ const postChangePassword = async (req, res) => {
             password: hashedPassword
         });
 
-        res.status(200).json({ message: 'Password updated successfully' });
+        res.status(HTTP_STATUS.OK).json({ message: 'Password updated successfully' });
     } catch (error) {
         console.error('Change password error:', error);
         res.status(500).json({ message: 'Failed to update password' });

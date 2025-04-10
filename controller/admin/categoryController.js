@@ -1,6 +1,8 @@
 import Category from '../../models/categoryModels.js';
 import Offer from '../../models/offerModel.js';
 import Product from '../../models/productModel.js';
+import { HTTP_STATUS } from "../../utils/httpStatusCodes.js";
+
 
 const categoryController = {
     // Get all categories
@@ -62,7 +64,7 @@ const categoryController = {
 
             await newCategory.save();
 
-            res.status(200).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: 'Category added successfully'
             });
@@ -129,7 +131,7 @@ const categoryController = {
                 });
             }
 
-            res.status(200).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: "Category updated successfully",
                 category: updatedCategory
@@ -160,7 +162,7 @@ const categoryController = {
             category.isActive = !category.isActive;
             await category.save();
     
-            res.status(200).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: `Category ${category.isActive ? 'activated' : 'deactivated'} successfully`
             });

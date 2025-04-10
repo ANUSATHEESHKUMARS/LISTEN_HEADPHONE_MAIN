@@ -508,9 +508,20 @@ async function removeFromCart(button, productId) {
               // Show success message
               await showAlert('success', data.message);
               
-              // Reload if cart is empty
+              // If cart is empty, show empty cart message
               if (data.itemCount === 0) {
-                  window.location.reload();
+                  const cartContainer = document.querySelector('.space-y-4');
+                  if (cartContainer) {
+                      cartContainer.innerHTML = `
+                          <div class="bg-white p-8 rounded-xl shadow-md text-center">
+                              <i class="fas fa-shopping-cart text-4xl text-gray-400 mb-4"></i>
+                              <p class="text-gray-500 mb-4">Your cart is empty</p>
+                              <a href="/shop" class="inline-block bg-black text-white px-6 py-2 rounded-lg">
+                                  Continue Shopping
+                              </a>
+                          </div>
+                      `;
+                  }
               }
           } else {
               throw new Error(data.message);
@@ -537,11 +548,6 @@ function updateCartTotals(total) {
   const cartItems = document.querySelectorAll('[id^="cart-item-"]');
   if (itemsCount) {
       itemsCount.textContent = `Subtotal (${cartItems.length} items)`;
-  }
-
-  // If cart is empty, reload page to show empty cart message
-  if (cartItems.length === 0) {
-      window.location.reload();
   }
 }
 

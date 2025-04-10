@@ -3,6 +3,8 @@
     import path from 'path';
     import fs from 'fs';
     import upload from '../../utils/multer.js'
+    import { HTTP_STATUS } from "../../utils/httpStatusCodes.js";
+
 
     const validateProductName = (name) => {
         // Remove extra spaces and check length
@@ -311,7 +313,7 @@
                 // Update the product
                 await Product.findByIdAndUpdate(productId, updatedProduct, { new: true });
                 
-                res.status(200).json({ message: 'Product updated successfully' });
+                res.status(HTTP_STATUS.OK).json({ message: 'Product updated successfully' });
 
             } catch (error) {
                 // Delete any newly uploaded files if there's an error
@@ -363,7 +365,7 @@
             // Delete the product
             await Product.findByIdAndDelete(productId);
 
-            res.status(200).json({ message: 'Product deleted successfully' });
+            res.status(HTTP_STATUS.OK).json({ message: 'Product deleted successfully' });
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error deleting product',

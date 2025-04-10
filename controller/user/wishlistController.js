@@ -74,7 +74,7 @@ const wishlistController = {
 
             await wishlist.save();
 
-            res.status(200).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: 'Product added to wishlist'
             });
@@ -104,7 +104,7 @@ const wishlistController = {
                 });
             }
 
-            res.status(200).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: 'Product removed from wishlist'
             });
@@ -184,7 +184,7 @@ const wishlistController = {
 
             await wishlist.save();
 
-            res.status(200).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
                 added,
                 message: added ? 'Added to wishlist' : 'Removed from wishlist'

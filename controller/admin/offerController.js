@@ -6,10 +6,19 @@ const offerController = {
     // Get all offers
     getOffers: async (req, res) => {
         try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = 5; // Number of offers per page
+            const skip = (page - 1) * limit;
+
+            const totalOffers = await Offer.countDocuments();
+            const totalPages = Math.ceil(totalOffers / limit);
+
             const offers = await Offer.find()
                 .populate('categoryId')
                 .populate('productIds')
-                .sort({ createdAt: -1 });
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit);
 
             const products = await Product.find({ isActive: true });
             const categories = await Category.find({ isActive: true });
@@ -18,7 +27,12 @@ const offerController = {
                 offers,
                 products,
                 categories,
-                admin: req.session.admin
+                admin: req.session.admin,
+                currentPage: page,
+                totalPages,
+                totalOffers,
+                startIndex: skip + 1,
+                endIndex: Math.min(skip + limit, totalOffers)
             });
         } catch (error) {
             console.error('Get offers error:', error);

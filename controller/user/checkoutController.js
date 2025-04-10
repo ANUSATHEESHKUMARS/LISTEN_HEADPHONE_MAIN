@@ -90,7 +90,7 @@ const createRazorpayOrder = async (req, res) => {
 
         const razorpayOrder = await razorpay.orders.create(options);
 
-        res.status(200).json({
+        res.status(HTTP_STATUS.OK).json({
             success: true,
             key: process.env.RAZORPAY_KEY_ID,
             amount: options.amount,
@@ -408,7 +408,7 @@ const verifyPayment = async (req, res) => {
         });
         delete req.session.coupon;
 
-        res.status(200).json({
+        res.status(HTTP_STATUS.OK).json({
             success: true,
             message: 'Payment verified and stock updated successfully',
             orderId: order._id,
