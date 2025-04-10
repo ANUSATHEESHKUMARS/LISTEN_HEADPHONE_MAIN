@@ -3,6 +3,7 @@ import userSchema from "../../models/userModels.js";
 import productSchema from "../../models/productModel.js";
 import Wallet from "../../models/walletModels.js";
 import PDFDocument from "pdfkit"
+import HTTP_STATUS from "../../utils/httpStatusCodes.js";
 
 const getOrders = async (req, res) => {
     try {
@@ -80,7 +81,7 @@ const getOrders = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching orders:', error);
-        res.status(500).render('error', {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', {
             message: 'Error fetching orders',
             error: error.message
         });
@@ -130,7 +131,7 @@ const cancelOrder = async (req, res) => {
         });
 
         if (!order) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
                 message: 'Order not found'
             });
@@ -142,7 +143,7 @@ const cancelOrder = async (req, res) => {
         );
 
         if (!orderItem) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
                 message: 'Product not found in order'
             });
@@ -150,7 +151,7 @@ const cancelOrder = async (req, res) => {
 
         // Check if item can be cancelled
         if (!['processing', 'pending'].includes(orderItem.order.status)) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Order cannot be cancelled at this stage'
             });
@@ -221,7 +222,7 @@ const cancelOrder = async (req, res) => {
 
     } catch (error) {
         console.error('Cancel order error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: error.message || 'Error cancelling order'
         });
@@ -241,7 +242,7 @@ const requestReturnItem = async (req, res) => {
         });
 
         if (!order) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
                 message: 'Order not found'
             });
@@ -252,7 +253,7 @@ const requestReturnItem = async (req, res) => {
         );
 
         if (!orderItem) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
                 message: 'Product not found in order'
             });
@@ -284,7 +285,7 @@ const requestReturnItem = async (req, res) => {
 
     } catch (error) {
         console.error('Return request error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: error.message || 'Error processing return request'
         });
@@ -302,7 +303,7 @@ const generateInvoice = async (req, res) => {
             .populate('items.product');
 
         if (!order) {
-            return res.status(404).json({ 
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ 
                 success: false,
                 message: 'Order not found' 
             });
@@ -367,7 +368,7 @@ const generateInvoice = async (req, res) => {
     } catch (error) {
         console.error('Generate invoice error:', error);
         if (!res.headersSent) {
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Error generating invoice'
             });

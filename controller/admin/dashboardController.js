@@ -1,6 +1,7 @@
 import Order from '../../models/orderModels.js';
 import { startOfYear, endOfYear, eachMonthOfInterval, format } from 'date-fns';
 import Category from '../../models/categoryModels.js';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const getDashboard = async (req, res) => {
     try {
@@ -32,7 +33,7 @@ const getDashboard = async (req, res) => {
                 break;
             case 'custom':
                 if (!req.query.startDate || !req.query.endDate) {
-                    return res.status(400).json({ error: 'Start date and end date are required for custom range' });
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Start date and end date are required for custom range' });
                 }
                 startDate = new Date(req.query.startDate);
                 endDate = new Date(req.query.endDate);
@@ -378,7 +379,7 @@ const getDashboard = async (req, res) => {
 
     } catch (error) {
         console.error('Dashboard Error:', error);
-        res.status(500).json({ error: 'Error loading dashboard data' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Error loading dashboard data' });
     }
 };
 
@@ -891,7 +892,7 @@ const getDashboardData = async (req, res) => {
 
     } catch (error) {
         console.error('Dashboard Data Error:', error);
-        res.status(500).json({ error: 'Error loading dashboard data' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Error loading dashboard data' });
     }
 };
 

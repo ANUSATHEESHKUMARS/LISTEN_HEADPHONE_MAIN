@@ -1,4 +1,5 @@
 import User from '../../models/userModels.js';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 // Get the list of all users with pagination
 const getUserList = async (req, res) => {
@@ -46,9 +47,9 @@ const getUserList = async (req, res) => {
     } catch (error) {
         console.error(error);
         if (req.xhr) {
-            return res.status(500).json({ error: 'Failed to fetch users' });
+            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Failed to fetch users' });
         }
-        res.status(500).send('Server error');
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send('Server error');
     }
 };
 
@@ -58,7 +59,7 @@ const getToggle = async (req, res) => {
         const user = await User.findById(userId);
 
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ error: 'User not found' });
         }
 
         user.blocked = !user.blocked;
@@ -77,9 +78,9 @@ const getToggle = async (req, res) => {
     } catch (err) {
         console.error(err);
         if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-            return res.status(500).json({ error: 'Server Error' });
+            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'Server Error' });
         }
-        res.status(500).send('Server Error');
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send('Server Error');
     }
 };
 

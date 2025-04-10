@@ -14,6 +14,10 @@ import initializeCategories from "./utils/initCategories.js";
 import passport from "./config/passport.js";
 import morgan from "morgan";
 import helmet from "helmet";
+import HTTP_STATUS from "./utils/httpStatusCodes.js";
+
+
+
 
 dotenv.config();
 
@@ -73,7 +77,7 @@ app.use("/admin", adminRoutes);
 app.use("/", userRoutes);
 
 app.use("*", (req, res) => {
-  res.status(404).render("partials/error");
+  res.status(HTTP_STATUS.NOT_FOUND).render("partials/error");
 });
 
 app.listen(process.env.PORT, () => {

@@ -4,6 +4,7 @@ import { generateOTP, sendOTPEmail } from '../../utils/sentOTP.js';
 import validatePassword from '../../utils/validatePassword.js ';
 import passport from 'passport';
 import dotenv from 'dotenv';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 
 const saltRounds = 10;
@@ -19,7 +20,7 @@ export const getContact = async (req, res) => {
         res.render('user/contact');
     } catch (error) {
         console.error('Error rendering about page:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send('Internal Server Error');
     }
 };
 
@@ -32,7 +33,7 @@ export const getabout = async (req, res) => {
         res.render('user/about');
     } catch (error) {
         console.error('Error rendering about page:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send('Internal Server Error');
     }
 };
 
@@ -42,7 +43,7 @@ const getSignUp = (req, res) => {
         res.render('user/signup');
     } catch (error) {
         console.error('Error rendering signup page:', error);
-        res.status(500).render('error', {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', {
             message: 'Error loading signup page',
             error: error.message
         });
@@ -54,7 +55,7 @@ const postSignUp = async (req, res) => {
 
         // Validate first name
         if (!firstName || !/^[a-zA-Z]{3,10}$/.test(firstName.trim())) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'First name should contain only letters (3-10 characters)'
             });
@@ -62,7 +63,7 @@ const postSignUp = async (req, res) => {
 
         // Validate last name
         if (!lastName || !/^[a-zA-Z]{1,10}$/.test(lastName.trim())) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Last name should contain only letters (1-10 characters)'
             });
@@ -70,7 +71,7 @@ const postSignUp = async (req, res) => {
 
         // Validate email
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Please enter a valid email address'
             });
@@ -79,7 +80,7 @@ const postSignUp = async (req, res) => {
         // Validate password
         const passwordValidation = validatePassword(password);
         if (!passwordValidation.isValid) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: passwordValidation.message
             });
@@ -95,7 +96,7 @@ const postSignUp = async (req, res) => {
                 ? "This email is linked to a Google login. Please log in with Google."
                 : "Email already registered";
 
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message
             });
@@ -132,7 +133,7 @@ const postSignUp = async (req, res) => {
         });
     } catch (error) {
         console.error('Signup error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Signup failed'
         });
@@ -145,13 +146,13 @@ const postOtp = async (req, res) => {
         const user = await userSchema.findOne({ email, otp: userOtp });
 
         if (!user) {
-            return res.status(400).json({ success: false, message: 'Invalid OTP' })
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: 'Invalid OTP' })
         }
         if (Date.now() > user.otpExpiresAt) {
             if (user.otpAttempts >= 3) {
-                return res.status(400).json({ error: 'Too many attempts.Please signup again.' })
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Too many attempts.Please signup again.' })
             }
-            return res.status(400).json({ error: 'Otp expired' })
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Otp expired' })
         }
 
 
@@ -169,12 +170,12 @@ const postOtp = async (req, res) => {
                 redirectUrl: '/home'
             });
         } else {
-            return res.status(400).json({ error: 'Invalid OTP' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Invalid OTP' });
         }
 
     } catch (error) {
         console.error('OTP verification error:', error);
-        return res.status(500).json({ error: 'OTP verification failed' });
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: 'OTP verification failed' });
     }
 }
 
@@ -184,7 +185,7 @@ const postResendOtp = async (req, res) => {
         const user = await userSchema.findOne({ email, isVerified: false });
 
         if (!user) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
                 message: 'User not found'
             });
@@ -192,7 +193,7 @@ const postResendOtp = async (req, res) => {
 
         // Check if max attempts reached
         if (user.otpAttempts >= 3) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Maximum attempts reached. Please signup again.'
             });
@@ -215,7 +216,7 @@ const postResendOtp = async (req, res) => {
 
     } catch (error) {
         console.error('Resend OTP error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Failed to resend OTP'
         });
@@ -227,7 +228,7 @@ const getLogin = (req, res) => {
         res.render('user/login')
     } catch (error) {
         console.error('Error rendering login page:', error);
-        res.status(500).render('error', {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', {
             message: 'Error loading login page',
             error: error.message
         });
@@ -240,7 +241,7 @@ const postLogin = async (req, res) => {
 
         // Server-side validation
         if (!email || !password) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'All fields are required'
             });
@@ -249,7 +250,7 @@ const postLogin = async (req, res) => {
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Invalid email format'
             });
@@ -260,14 +261,14 @@ const postLogin = async (req, res) => {
 
         // Check if user exists
         if (!user) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: "Your email is not registered. Please signup first."
             });
         }
 
         if (!user.password) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'This email is linked to a Google login. Please log in with Google.'
             });
@@ -275,7 +276,7 @@ const postLogin = async (req, res) => {
 
         // Check if user is verified
         if (!user.isVerified) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Please verify your email first'
             });
@@ -283,7 +284,7 @@ const postLogin = async (req, res) => {
 
         // Check if user is blocked
         if (user.blocked) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Your account has been blocked'
             });
@@ -292,7 +293,7 @@ const postLogin = async (req, res) => {
         // Verify password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Invalid credentials'
             });
@@ -311,7 +312,7 @@ const postLogin = async (req, res) => {
 
     } catch (error) {
         console.error('Login error:', error);
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Login failed'
         });
@@ -323,7 +324,7 @@ const getForgotPassword = (req, res) => {
         res.render('user/forgotPassword');
     } catch (error) {
         console.error('Error rendering forgot password page:', error);
-        res.status(500).render('error', {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', {
             message: 'Error loading forgot password page',
             error: error.message
         });
@@ -337,11 +338,11 @@ const sendForgotPasswordOTP = async (req, res) => {
         // Find user
         const user = await userSchema.findOne({ email, isVerified: true });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'User not found' });
         }
 
         if (!user.password) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 message: 'This email is linked to Google login. Please login with Google.'
             });
         }
@@ -359,7 +360,7 @@ const sendForgotPasswordOTP = async (req, res) => {
         res.status(HTTP_STATUS.OK).json({ message: 'OTP sent successfully' });
     } catch (error) {
         console.error('Send OTP error:', error);
-        res.status(500).json({ message: 'Failed to send OTP' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Failed to send OTP' });
     }
 };
 
@@ -374,7 +375,7 @@ const verifyForgotPasswordOTP = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ message: 'Invalid or expired OTP' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Invalid or expired OTP' });
         }
 
         // Increment attempts
@@ -383,18 +384,18 @@ const verifyForgotPasswordOTP = async (req, res) => {
             await userSchema.findByIdAndUpdate(user._id, {
                 $unset: { otp: 1, otpExpiresAt: 1, otpAttempts: 1 }
             });
-            return res.status(400).json({ message: 'Too many attempts. Please try again.' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Too many attempts. Please try again.' });
         }
         await user.save();
 
         if (user.otp !== otp) {
-            return res.status(400).json({ message: 'Invalid OTP' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Invalid OTP' });
         }
 
         res.status(HTTP_STATUS.OK).json({ message: 'OTP verified successfully' });
     } catch (error) {
         console.error('Verify OTP error:', error);
-        res.status(500).json({ message: 'Failed to verify OTP' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Failed to verify OTP' });
     }
 };
 
@@ -404,13 +405,13 @@ const resetPassword = async (req, res) => {
 
         const user = await userSchema.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'User not found' });
         }
 
         // Validate new password
         const passwordValidation = validatePassword(newPassword);
         if (!passwordValidation.isValid) {
-            return res.status(400).json({ message: passwordValidation.message });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: passwordValidation.message });
         }
 
         // Hash new password
@@ -432,7 +433,7 @@ const resetPassword = async (req, res) => {
         });
     } catch (error) {
         console.error('Reset password error:', error);
-        res.status(500).json({ message: 'Failed to reset password' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Failed to reset password' });
     }
 };
 
@@ -456,7 +457,7 @@ const getChangePassword = async (req, res) => {
 
     } catch (error) {
         console.error('Get change password error:', error);
-        res.status(500).render('error', {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', {
             message: 'Error loading change password page',
             error: error.message
         });
@@ -470,19 +471,19 @@ const postChangePassword = async (req, res) => {
 
         const user = await userSchema.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'User not found' });
         }
 
         // Verify current password
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Current password is incorrect' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Current password is incorrect' });
         }
 
         // Validate new password
         const passwordValidation = validatePassword(newPassword);
         if (!passwordValidation.isValid) {
-            return res.status(400).json({ message: passwordValidation.message });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: passwordValidation.message });
         }
 
         // Hash new password
@@ -496,7 +497,7 @@ const postChangePassword = async (req, res) => {
         res.status(HTTP_STATUS.OK).json({ message: 'Password updated successfully' });
     } catch (error) {
         console.error('Change password error:', error);
-        res.status(500).json({ message: 'Failed to update password' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Failed to update password' });
     }
 };
 
@@ -567,7 +568,7 @@ const getLogout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error("Error destroying session:", err);
-            return res.status(500).json({ message: "Logout failed" });
+            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Logout failed" });
         }
 
         res.clearCookie('connect.sid'); 

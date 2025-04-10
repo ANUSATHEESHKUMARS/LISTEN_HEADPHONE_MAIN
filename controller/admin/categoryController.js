@@ -1,8 +1,7 @@
 import Category from '../../models/categoryModels.js';
 import Offer from '../../models/offerModel.js';
 import Product from '../../models/productModel.js';
-import { HTTP_STATUS } from "../../utils/httpStatusCodes.js";
-
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const categoryController = {
     // Get all categories
@@ -23,7 +22,7 @@ const categoryController = {
             res.render('admin/categories', { categories });
         } catch (error) {
             console.error('Error fetching categories:', error);
-            res.status(500).render('admin/error', {
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('admin/error', {
                 message: 'Error loading categories',
                 error: error.message
             });
@@ -37,7 +36,7 @@ const categoryController = {
 
             // Validate input
             if (!categoryName || !categoryDescription || !type) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'Category name, description, and type are required'
                 });
@@ -49,7 +48,7 @@ const categoryController = {
             });
 
             if (existingCategory) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'Category already exists'
                 });
@@ -70,7 +69,7 @@ const categoryController = {
             });
         } catch (error) {
             console.error('Error adding category:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Error adding category'
             });
@@ -86,7 +85,7 @@ const categoryController = {
 
             // Validate input
             if (!categoryId || !categoryName || !categoryDescription) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: "All fields are required"
                 });
@@ -95,7 +94,7 @@ const categoryController = {
             // Check if category exists
             const existingCategory = await Category.findById(categoryId);
             if (!existingCategory) {
-                return res.status(404).json({
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     message: "Category not found"
                 });
@@ -108,7 +107,7 @@ const categoryController = {
             });
 
             if (duplicateCategory) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: "Category name already exists"
                 });
@@ -125,7 +124,7 @@ const categoryController = {
             );
 
             if (!updatedCategory) {
-                return res.status(500).json({
+                return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     message: "Failed to update category"
                 });
@@ -139,7 +138,7 @@ const categoryController = {
 
         } catch (error) {
             console.error('Edit Category Error:', error); // Debug log
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: error.message || "Error updating category"
             });
@@ -153,7 +152,7 @@ const categoryController = {
             const category = await Category.findById(id);
     
             if (!category) {
-                return res.status(404).json({
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     message: 'Category not found'
                 });
@@ -168,7 +167,7 @@ const categoryController = {
             });
         } catch (error) {
             console.error('Error toggling category:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Error updating category status'
             });
@@ -191,7 +190,7 @@ const categoryController = {
             });
         } catch (error) {
             console.error('Error fetching category offers:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Error fetching offers'
             });
@@ -206,7 +205,7 @@ const categoryController = {
 
             // Validate input
             if (!name || !discount || !startDate || !endDate) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'All fields are required'
                 });
@@ -232,7 +231,7 @@ const categoryController = {
             });
         } catch (error) {
             console.error('Error adding category offer:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: error.message || 'Error adding offer'
             });

@@ -2,6 +2,7 @@ import Wallet from "../../models/walletModels.js"
 import userSchema from "../../models/userModels.js"
 import razorpay from "../../utils/razorpay.js"
 import crypto from 'crypto';
+import HTTP_STATUS from "../../utils/httpStatusCodes.js";
 
 const getWallet = async (req, res) => {
     try {
@@ -44,7 +45,7 @@ const getWallet = async (req, res) => {
         });
     } catch (error) {
         console.error('Get wallet error', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             message: 'Error feteching wallet details',
             user: req.session.user
         });
@@ -57,7 +58,7 @@ const initiateRecharge = async (req, res) => {
         const userId = req.session.user;
 
         if (!amount || amount < 1) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Please enter a valid amount'
             });
@@ -82,7 +83,7 @@ const initiateRecharge = async (req, res) => {
 
     } catch (error) {
         console.error('Recharge initiation error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Failed to initiate recharge'
         });
@@ -104,7 +105,7 @@ const verifyRecharge = async (req, res) => {
             .digest("hex");
 
         if (razorpay_signature !== expectedSign) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Invalid signature'
             });
@@ -117,7 +118,7 @@ const verifyRecharge = async (req, res) => {
         const wallet = await Wallet.findOne({ userId });
 
         if (!wallet) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
                 message: 'Wallet not found'
             });
@@ -142,7 +143,7 @@ const verifyRecharge = async (req, res) => {
 
     } catch (error) {
         console.error('Recharge verification error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Failed to verify recharge'
         });

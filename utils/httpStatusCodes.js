@@ -1,4 +1,4 @@
-export const HTTP_STATUS = {
+let  HTTP_STATUS = {
     OK: 200,
     CREATED: 201,
     BAD_REQUEST: 400,
@@ -9,3 +9,4 @@ export const HTTP_STATUS = {
     INTERNAL_SERVER_ERROR: 500,
   };
   
+  export default HTTP_STATUS

@@ -1,5 +1,6 @@
 import Wishlist from '../../models/wishlistModels.js';
 import Product from '../../models/productModel.js';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const wishlistController = {
     getWishlist: async (req, res) => {
@@ -26,7 +27,7 @@ const wishlistController = {
             });
         } catch (error) {
             console.error('Get wishlist error:', error);
-            res.status(500).render('error', { 
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', { 
                 message: 'Error loading wishlist',
                 user: req.session.user 
             });
@@ -43,7 +44,7 @@ const wishlistController = {
                 .populate('categoriesId');
 
             if (!product || !product.isActive || !product.categoriesId?.isActive) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'Product is not available'
                 });
@@ -63,7 +64,7 @@ const wishlistController = {
                 );
 
                 if (existingItem) {
-                    return res.status(400).json({
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({
                         success: false,
                         message: 'Product already in wishlist'
                     });
@@ -80,7 +81,7 @@ const wishlistController = {
             });
         } catch (error) {
             console.error('Add to wishlist error:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Failed to add to wishlist'
             });
@@ -98,7 +99,7 @@ const wishlistController = {
             );
 
             if (result.modifiedCount === 0) {
-                return res.status(404).json({
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     message: 'Product not found in wishlist'
                 });
@@ -110,7 +111,7 @@ const wishlistController = {
             });
         } catch (error) {
             console.error('Remove from wishlist error:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Failed to remove from wishlist'
             });
@@ -133,7 +134,7 @@ const wishlistController = {
             });
         } catch (error) {
             console.error('Check wishlist status error:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Error checking wishlist status'
             });
@@ -150,7 +151,7 @@ const wishlistController = {
                 .populate('categoriesId');
 
             if (!product || !product.isActive || !product.categoriesId?.isActive) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'Product is not available'
                 });
@@ -191,7 +192,7 @@ const wishlistController = {
             });
         } catch (error) {
             console.error('Toggle wishlist error:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Failed to update wishlist'
             });

@@ -1,6 +1,7 @@
 import Offer from '../../models/offerModel.js';
 import Product from '../../models/productModel.js';
 import Category from '../../models/categoryModels.js';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const offerController = {
     // Get all offers
@@ -36,7 +37,7 @@ const offerController = {
             });
         } catch (error) {
             console.error('Get offers error:', error);
-            res.status(500).render('error', {
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', {
                 message: 'Error fetching offers',
                 error: error.message,
                 admin: req.session.admin
@@ -59,7 +60,7 @@ const offerController = {
 
             // Validate required fields
             if (!name || !type || !itemIds || !discount || !startDate || !endDate) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'All fields are required'
                 });
@@ -75,14 +76,14 @@ const offerController = {
             now.setMinutes(now.getMinutes() - 330);
 
             if (start < now) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'Start date cannot be in the past'
                 });
             }
 
             if (end <= start) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'End date must be after start date'
                 });
@@ -109,7 +110,7 @@ const offerController = {
                         )
                     );
 
-                    return res.status(400).json({
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({
                         success: false,
                         message: `Following products already have offers for this period: ${conflictingProducts.map(p => p.productName).join(', ')}`
                     });
@@ -127,7 +128,7 @@ const offerController = {
 
                 if (existingOffers.length > 0) {
                     const category = await Category.findById(itemIds[0]);
-                    return res.status(400).json({
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({
                         success: false,
                         message: `Category '${category.name}' already has an offer for this period`
                     });
@@ -171,7 +172,7 @@ const offerController = {
 
         } catch (error) {
             console.error('Create offer error:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: error.message || 'Error creating offer'
             });
@@ -187,7 +188,7 @@ const offerController = {
     //             .populate('categoryId');
 
     //         if (!offer) {
-    //             return res.status(404).json({
+    //             return res.status(HTTP_STATUS.NOT_FOUND).json({
     //                 success: false,
     //                 message: 'Offer not found'
     //             });
@@ -200,7 +201,7 @@ const offerController = {
 
     //     } catch (error) {
     //         console.error('Get offer error:', error);
-    //         res.status(500).json({
+    //         res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     //             success: false,
     //             message: 'Error fetching offer details'
     //         });
@@ -230,14 +231,14 @@ const offerController = {
             now.setMinutes(now.getMinutes() - 330);
 
             if (start < now) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'Start date cannot be in the past'
                 });
             }
 
             if (end <= start) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: 'End date must be after start date'
                 });
@@ -265,7 +266,7 @@ const offerController = {
                         )
                     );
 
-                    return res.status(400).json({
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({
                         success: false,
                         message: `Following products already have offers for this period: ${conflictingProducts.map(p => p.productName).join(', ')}`
                     });
@@ -284,7 +285,7 @@ const offerController = {
 
                 if (existingOffers.length > 0) {
                     const category = await Category.findById(itemIds[0]);
-                    return res.status(400).json({
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({
                         success: false,
                         message: `Category '${category.name}' already has an offer for this period`
                     });
@@ -293,7 +294,7 @@ const offerController = {
 
             const existingOffer = await Offer.findById(offerId);
             if (!existingOffer) {
-                return res.status(404).json({
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     message: 'Offer not found'
                 });
@@ -354,7 +355,7 @@ const offerController = {
 
         } catch (error) {
             console.error('Update offer error:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: error.message || 'Error updating offer'
             });
@@ -368,7 +369,7 @@ const offerController = {
             const offer = await Offer.findById(offerId);
 
             if (!offer) {
-                return res.status(404).json({
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     message: 'Offer not found'
                 });
@@ -395,7 +396,7 @@ const offerController = {
 
         } catch (error) {
             console.error('Delete offer error:', error);
-            res.status(500).json({
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: 'Error deleting offer'
             });

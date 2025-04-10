@@ -1,6 +1,7 @@
 import Order from "../../models/orderModels.js"
 import ExcelJS from 'exceljs'
 import PDFDocument from "pdfkit-table"
+import HTTP_STATUS from "../../utils/httpStatusCodes.js";
 
 const getSalesReport = async (req, res, next) => {
     try {
@@ -228,7 +229,7 @@ const downloadExcel = async (req, res, next) => {
 
     } catch (error) {
         console.error('Excel download error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Failed to generate Excel report'
         });

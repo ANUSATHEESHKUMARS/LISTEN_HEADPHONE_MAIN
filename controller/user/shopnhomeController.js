@@ -2,6 +2,7 @@ import Product from '../../models/productModel.js'
 import Category from '../../models/categoryModels.js';
 import Offer from '../../models/offerModel.js';
 import mongoose from 'mongoose';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const getHome = async (req, res) => {
     try {
@@ -265,7 +266,7 @@ const getShop = async (req, res) => {
 
     } catch (error) {
         console.error('Error in getShop:', error);
-        res.status(500).render('user/shop', {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('user/shop', {
             products: [],
             categories: [],
             pagination: {

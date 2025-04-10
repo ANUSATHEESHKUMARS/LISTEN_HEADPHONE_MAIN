@@ -1,5 +1,6 @@
 import Coupon from '../../models/couponModel.js';
 import userSchema from '../../models/userModels.js';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const couponController = {
     getCoupons: async (req, res) => {
@@ -25,7 +26,7 @@ const couponController = {
             
         } catch (error) {
             console.error('Get coupons error:', error);
-            res.status(500).render('error', { 
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', { 
                 message: 'Error fetching coupons'
             });
         }

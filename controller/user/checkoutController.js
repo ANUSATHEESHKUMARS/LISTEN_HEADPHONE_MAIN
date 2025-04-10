@@ -2,13 +2,13 @@ import cartSchema from '../../models/cartModels.js';
 import addressSchema from '../../models/addressModels.js';
 import productSchema from '../../models/productModel.js';
 import orderSchema from '../../models/orderModels.js';
-// import couponSchema from '../../models/couponModel.js';
 import razorpay from '../../utils/razorpay.js';
 import crypto from 'crypto';
 import wallet from '../../models/walletModels.js';
 import Wallet from '../../models/walletModels.js';
 import Coupon from '../../models/couponModel.js';
 import Offer from '../../models/offerModel.js';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 
 // Function to create Razorpay order
@@ -107,7 +107,7 @@ const createRazorpayOrder = async (req, res) => {
 
     } catch (error) {
         console.error('Razorpay order creation error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Payment initiation failed'
         });
@@ -259,7 +259,7 @@ const verifyPayment = async (req, res) => {
             .digest("hex");
 
         if (razorpay_signature !== expectedSign) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Invalid payment signature'
             });
@@ -358,7 +358,7 @@ const verifyPayment = async (req, res) => {
         });
 
         if (!address) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Delivery address not found'
             });
@@ -417,7 +417,7 @@ const verifyPayment = async (req, res) => {
 
     } catch (error) {
         console.error('Payment verification error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: error.message || 'Error verifying payment'
         });
@@ -519,7 +519,7 @@ const placeOrder = async (req, res) => {
 
         // Validate COD payment method
         if (paymentMethod === 'cod' && finalAmount > 1000) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Cash on Delivery is not available for orders above ₹1000'
             });
@@ -529,7 +529,7 @@ const placeOrder = async (req, res) => {
         for (const item of orderItems) {
             const product = await productSchema.findById(item.product);
             if (!product || product.stock < item.quantity) {
-                return res.status(400).json({
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: `Insufficient stock for product: ${product ? product.productName : 'Unknown Product'}`
                 });
@@ -585,7 +585,7 @@ const placeOrder = async (req, res) => {
 
     } catch (error) {
         console.error('Place order error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: error.message || 'Error placing order'
         });
@@ -606,7 +606,7 @@ const walletPayment = async (req, res) => {
             });
 
         if (!cart || cart.items.length === 0) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Cart is empty'
             });
@@ -702,7 +702,7 @@ const walletPayment = async (req, res) => {
         // Get wallet and check balance
         const userWallet = await Wallet.findOne({ userId });
         if (!userWallet || userWallet.balance < finalAmount) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Insufficient wallet balance'
             });
@@ -752,7 +752,7 @@ const walletPayment = async (req, res) => {
 
     } catch (error) {
         console.error('Wallet payment error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: error.message || 'Error processing wallet payment'
         });
@@ -774,7 +774,7 @@ const getAvailableCoupons = async (req, res) => {
             .populate('items.productId');
 
         if (!cart) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Cart not found'
             });
@@ -820,7 +820,7 @@ const getAvailableCoupons = async (req, res) => {
 
     } catch (error) {
         console.error('Get available coupons error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Error fetching coupons'
         });
@@ -840,7 +840,7 @@ const applyCoupon = async (req, res, next) => {
         });
 
         if (!coupon) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Invalid or expired coupon'
             });
@@ -848,7 +848,7 @@ const applyCoupon = async (req, res, next) => {
 
         // Check total coupon usage limit
         if (coupon.totalCoupon !== null && coupon.usedCouponCount >= coupon.totalCoupon) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Coupon limit has been exceeded. This coupon is no longer available.'
             });
@@ -860,7 +860,7 @@ const applyCoupon = async (req, res, next) => {
         ).length;
 
         if (userUsageCount >= coupon.userUsageLimit) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: `You have exceeded the usage limit (${coupon.userUsageLimit}) for this coupon`
             });
@@ -877,7 +877,7 @@ const applyCoupon = async (req, res, next) => {
 
         // Check minimum purchase required
         if (cartTotal < coupon.minimumPurchase) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: `Minimum purchase of ₹${coupon.minimumPurchase} required`
             });

@@ -1,5 +1,6 @@
 import Product from '../../models/productModel.js';
 import Offer from "../../models/offerModel.js";
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const getProductDetails = async (req, res) => {
     console.log("HELLOOOO");
@@ -13,7 +14,7 @@ const getProductDetails = async (req, res) => {
 
         if (!product || !product.isActive) {
             console.log('Product not found or inactive'); // Debug log
-            return res.status(404).redirect('/home');
+            return res.status(HTTP_STATUS.NOT_FOUND).redirect('/home');
         }
 
         // Fetch active offers
@@ -138,7 +139,7 @@ const getProductDetails = async (req, res) => {
 
     } catch (error) {
         console.error('Error in getProductDetails:', error);
-        res.status(500).render('error', { 
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('error', { 
             message: 'Error loading product details',
             error: error.message
         });

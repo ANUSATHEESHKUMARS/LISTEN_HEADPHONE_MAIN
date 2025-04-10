@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 config()
 
@@ -12,7 +13,7 @@ const postAdmin = async (req, res) => {
 
         // Input validation
         if (!email || !password) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Email and password are required'
             });
@@ -21,7 +22,7 @@ const postAdmin = async (req, res) => {
         // Email format validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Please enter a valid email address'
             });
@@ -36,14 +37,14 @@ const postAdmin = async (req, res) => {
                 redirectUrl: '/admin/dashboard'
             });
         } else {
-            return res.status(401).json({
+            return res.status(HTTP_STATUS.UNAUTHORIZED).json({
                 success: false,
                 message: 'Invalid email or password'
             });
         }
     } catch (error) {
         console.error('Admin login error:', error);
-        return res.status(500).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'An error occurred during login',
 // Remove this in production!

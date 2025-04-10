@@ -1,6 +1,7 @@
 import orderSchema from '../../models/orderModels.js';
 import productSchema from '../../models/productModel.js';
-import wallet from '../../models/walletModels.js'
+import wallet from '../../models/walletModels.js';
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const getOrders = async (req, res) => {
     try {
@@ -78,7 +79,7 @@ const getOrders = async (req, res) => {
         });
     } catch (error) {
         console.error('Get orders error:', error);
-        res.status(500).render('admin/error', {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).render('admin/error', {
             message: 'Error fetching orders',
             error,
             admin: req.session.admin
@@ -96,7 +97,7 @@ const updateItemStatus = async (req, res, next) => {
             .populate('items.product');
 
         if (!order) {
-            return res.status(404).json({ success: false, message: 'Order not found' });
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Order not found' });
         }
 
         const item = order.items.find(item =>
@@ -104,7 +105,7 @@ const updateItemStatus = async (req, res, next) => {
         );
 
         if (!item) {
-            return res.status(404).json({ success: false, message: 'Item not found' });
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Item not found' });
         }
 
         // Update item status
@@ -163,7 +164,7 @@ const handleReturnRequest = async (req, res) => {
             .populate('userId');
 
         if (!order) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
                 message: 'Order not found'
             });
@@ -174,7 +175,7 @@ const handleReturnRequest = async (req, res) => {
         );
 
         if (!item) {
-            return res.status(404).json({
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
                 message: 'Item not found'
             });
@@ -246,7 +247,7 @@ const handleReturnRequest = async (req, res) => {
 
     } catch (error) {
         console.error('Handle return error:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: error.message || 'Error handling return request'
         });

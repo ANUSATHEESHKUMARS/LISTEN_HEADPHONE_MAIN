@@ -3,7 +3,6 @@ import productSchema from '../../models/productModel.js';
 import Category from '../../models/categoryModels.js';
 import Offer from '../../models/offerModel.js';
 
-
 const getCart = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -206,7 +205,7 @@ const addToCart = async (req, res) => {
 
         await cart.save();
 
-        res.status(HTTP_STATUS.OK).json({ 
+        res.status(200).json({ 
             message: 'Product added to cart successfully',
             cartCount: cart.items.length,
             total: cart.total
@@ -326,17 +325,20 @@ const removeFromCart = async (req, res) => {
         const { productId } = req.params;
         const userId = req.session.user;
 
+        // Find the cart
         const cart = await cartSchema.findOne({ userId });
         if (!cart) {
             return res.status(404).json({ message: 'Cart not found' });
         }
 
+        // Remove the item
         cart.items = cart.items.filter(item => 
             item.productId.toString() !== productId
         );
 
         await cart.save();
 
+        // Calculate new totals
         const updatedCart = await cartSchema.findOne({ userId }).populate('items.productId');
         const cartItems = updatedCart.items.map(item => ({
             product: item.productId,
@@ -347,7 +349,7 @@ const removeFromCart = async (req, res) => {
 
         const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
 
-        res.status(HTTP_STATUS.OK).json({ 
+        res.status(200).json({ 
             message: 'Item removed from cart',
             total,
             itemCount: cart.items.length

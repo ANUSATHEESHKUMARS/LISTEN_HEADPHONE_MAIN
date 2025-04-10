@@ -1,5 +1,6 @@
 import userSchema from "../../models/userModels.js";
 import { generateOTP, sendOTPEmail } from "../../utils/sentOTP.js";
+import HTTP_STATUS from "../../utils/httpStatusCodes.js";
 
 const getProfile = async (req, res) => {
     try {
@@ -7,7 +8,7 @@ const getProfile = async (req, res) => {
         res.render('user/profile', { user });
     } catch (error) {
         console.error('Error fetching profile:', error);
-        res.status(500).send('Error loading profile');
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send('Error loading profile');
     }
 };
 
@@ -38,7 +39,7 @@ const updateProfile = async (req, res) => {
         }
 
         if (errors.length > 0) {
-            return res.status(400).json({
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 message: errors.join(', ')
             });
         }
@@ -56,7 +57,7 @@ const updateProfile = async (req, res) => {
         res.status(HTTP_STATUS.OK).json({ message: 'Profile updated successfully' });
     } catch (error) {
         console.error('Error updating profile:', error);
-        res.status(500).json({ message: 'Error updating profile' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error updating profile' });
     }
 };
 
@@ -67,13 +68,13 @@ const initiateEmailChange = async (req, res) => {
         // Check if email is different from current email
         const currentUser = await userSchema.findById(req.session.user);
         if (currentUser.email === newEmail) {
-            return res.status(400).json({ message: 'New email must be different from current email' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'New email must be different from current email' });
         }
 
         // Check if email is already in use
         const existingUser = await userSchema.findOne({ email: newEmail });
         if (existingUser) {
-            return res.status(400).json({ message: 'Email already in use' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Email already in use' });
         }
 
         // Generate OTP
@@ -92,7 +93,7 @@ const initiateEmailChange = async (req, res) => {
         res.status(HTTP_STATUS.OK).json({ message: 'OTP sent successfully' });
     } catch (error) {
         console.error('Error initiating email change:', error);
-        res.status(500).json({ message: 'Failed to send OTP' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Failed to send OTP' });
     }
 };
 
@@ -101,7 +102,7 @@ const verifyEmailOTP = async (req, res) => {
         const { otp } = req.body;
 
         if (!req.session.emailChange) {
-            return res.status(400).json({ message: 'No email change request found' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'No email change request found' });
         }
 
         const { otp: storedOTP, newEmail, timestamp } = req.session.emailChange;
@@ -109,12 +110,12 @@ const verifyEmailOTP = async (req, res) => {
         // Check if OTP has expired (10 minutes)
         if (Date.now() - timestamp > 600000) {
             delete req.session.emailChange;
-            return res.status(400).json({ message: 'OTP has expired' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'OTP has expired' });
         }
 
         // Verify OTP
         if (otp !== storedOTP) {
-            return res.status(400).json({ message: 'Invalid OTP' });
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Invalid OTP' });
         }
 
         // Update email
@@ -126,7 +127,7 @@ const verifyEmailOTP = async (req, res) => {
         res.status(HTTP_STATUS.OK).json({ message: 'Email updated successfully' });
     } catch (error) {
         console.error('Error verifying email OTP:', error);
-        res.status(500).json({ message: 'Failed to verify OTP' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Failed to verify OTP' });
     }
 };
 

@@ -1,6 +1,5 @@
 import Coupon from '../../models/couponModel.js'
-import { HTTP_STATUS } from "../../utils/httpStatusCodes.js";
-
+import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
 const adminCouponController = {
     // Get all coupons
@@ -34,7 +33,7 @@ const adminCouponController = {
             });
         } catch (error) {
             console.error('Error fetching coupons:', error);
-            res.status(500).json({ message: 'Error fetching coupons' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching coupons' });
         }
     },
 
@@ -55,22 +54,22 @@ const adminCouponController = {
 
             // Validate description
             if (!description || description.trim().length === 0) {
-                return res.status(400).json({ message: 'Description is required' });
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Description is required' });
             }
 
             if (description.length > 100) {
-                return res.status(400).json({ message: 'Description must be less than 100 characters' });
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Description must be less than 100 characters' });
             }
 
             // Validate discount percentage
             if (discountPercentage < 0 || discountPercentage > 100) {
-                return res.status(400).json({ message: 'Discount percentage must be between 0 and 100' });
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Discount percentage must be between 0 and 100' });
             }
 
             // Check if coupon code already exists
             const existingCoupon = await Coupon.findOne({ code: code.toUpperCase() });
             if (existingCoupon) {
-                return res.status(400).json({ message: 'Coupon code already exists' });
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Coupon code already exists' });
             }
 
             // Create new coupon
@@ -90,7 +89,7 @@ const adminCouponController = {
             res.status(HTTP_STATUS.OK).json({ message: 'Coupon added successfully' });
         } catch (error) {
             console.error('Error adding coupon:', error);
-            res.status(500).json({ message: 'Error adding coupon' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error adding coupon' });
         }
     },
 
@@ -99,12 +98,12 @@ const adminCouponController = {
         try {
             const coupon = await Coupon.findById(req.params.id);
             if (!coupon) {
-                return res.status(404).json({ message: 'Coupon not found' });
+                return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'Coupon not found' });
             }
             res.json(coupon);
         } catch (error) {
             console.error('Error fetching coupon details:', error);
-            res.status(500).json({ message: 'Error fetching coupon details' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching coupon details' });
         }
     },
 
@@ -125,7 +124,7 @@ const adminCouponController = {
 
             // Validate discount percentage
             if (discountPercentage < 0 || discountPercentage > 100) {
-                return res.status(400).json({ message: 'Discount percentage must be between 0 and 100' });
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Discount percentage must be between 0 and 100' });
             }
 
             // Check if updated code conflicts with existing coupons
@@ -134,7 +133,7 @@ const adminCouponController = {
                 _id: { $ne: req.params.id }
             });
             if (existingCoupon) {
-                return res.status(400).json({ message: 'Coupon code already exists' });
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Coupon code already exists' });
             }
 
             const updatedCoupon = await Coupon.findByIdAndUpdate(
@@ -154,13 +153,13 @@ const adminCouponController = {
             );
 
             if (!updatedCoupon) {
-                return res.status(404).json({ message: 'Coupon not found' });
+                return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'Coupon not found' });
             }
 
             res.status(HTTP_STATUS.OK).json({ message: 'Coupon updated successfully' });
         } catch (error) {
             console.error('Error updating coupon:', error);
-            res.status(500).json({ message: 'Error updating coupon' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error updating coupon' });
         }
     },
 
@@ -169,12 +168,12 @@ const adminCouponController = {
         try {
             const deletedCoupon = await Coupon.findByIdAndDelete(req.params.id);
             if (!deletedCoupon) {
-                return res.status(404).json({ message: 'Coupon not found' });
+                return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'Coupon not found' });
             }
             res.status(HTTP_STATUS.OK).json({ message: 'Coupon deleted successfully' });
         } catch (error) {
             console.error('Error deleting coupon:', error);
-            res.status(500).json({ message: 'Error deleting coupon' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting coupon' });
         }
     },
 
@@ -183,7 +182,7 @@ const adminCouponController = {
         try {
             const coupon = await Coupon.findById(req.params.id);
             if (!coupon) {
-                return res.status(404).json({ message: 'Coupon not found' });
+                return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'Coupon not found' });
             }
 
             coupon.isActive = !coupon.isActive;
@@ -194,7 +193,7 @@ const adminCouponController = {
             });
         } catch (error) {
             console.error('Error toggling coupon status:', error);
-            res.status(500).json({ message: 'Error updating coupon status' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error updating coupon status' });
         }
     }
 };

@@ -3,8 +3,7 @@
     import path from 'path';
     import fs from 'fs';
     import upload from '../../utils/multer.js'
-    import { HTTP_STATUS } from "../../utils/httpStatusCodes.js";
-
+    import HTTP_STATUS from '../../utils/httpStatusCodes.js';
 
     const validateProductName = (name) => {
         // Remove extra spaces and check length
@@ -81,7 +80,7 @@
             });
         } catch (error) {
             console.error('Error rendering product page:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
         }
     };
 
@@ -91,24 +90,24 @@
 
         uploadMultiple(req, res, async (err) => {
             if (err) {
-                return res.status(400).json({ message: err.message });
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: err.message });
             }
 
             try {
                 // Check if files were uploaded
                 if (!req.files || req.files.length !== 3) {
-                    return res.status(400).json({ message: 'Please upload exactly 3 images' });
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Please upload exactly 3 images' });
                 }
 
                 // Validate file types and sizes
                 for (const file of req.files) {
                     if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                        return res.status(400).json({ message: 'Each image must be less than 5MB' });
+                        return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Each image must be less than 5MB' });
                     }
 
                     const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
                     if (!validTypes.includes(file.mimetype)) {
-                        return res.status(400).json({ message: 'Invalid file type. Only JPG, JPEG, PNG, and WebP are allowed' });
+                        return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'Invalid file type. Only JPG, JPEG, PNG, and WebP are allowed' });
                     }
                 }
 
@@ -125,7 +124,7 @@
 
                 // Validate required fields
                 if (!productName || !brand || !categoriesId || !price || !stock) {
-                    return res.status(400).json({ message: 'All fields are required' });
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'All fields are required' });
                 }
 
                 // Validate product name and brand
@@ -134,7 +133,7 @@
                     validatedName = validateProductName(productName);
                     validatedBrand = validateBrand(brand);
                 } catch (validationError) {
-                    return res.status(400).json({ message: validationError.message });
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: validationError.message });
                 }
 
                 // Check for duplicate product name
@@ -144,7 +143,7 @@
                 });
                 
                 if (existingProduct) {
-                    return res.status(400).json({ message: 'A product with this name already exists' });
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'A product with this name already exists' });
                 }
 
                 // Process and save the images
@@ -164,7 +163,7 @@
                 });
 
                 await newProduct.save();
-                res.status(201).json({ message: 'Product added successfully' });
+                res.status(HTTP_STATUS.CREATED).json({ message: 'Product added successfully' });
 
             } catch (error) {
                 // Delete uploaded files if there's an error
@@ -178,7 +177,7 @@
                 }
                 
                 console.error('Error adding product:', error);
-                res.status(400).json({ message: error.message || 'Error adding product' });
+                res.status(HTTP_STATUS.BAD_REQUEST).json({ message: error.message || 'Error adding product' });
             }
         });
     };
@@ -190,7 +189,7 @@
                 .populate('categoriesId');
 
             if (!product) {
-                return res.status(404).json({ message: 'Product not found' });
+                return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'Product not found' });
             }
 
             // Convert to plain object and sanitize
@@ -214,7 +213,7 @@
             res.json(sanitizedProduct);
         } catch (error) {
             console.error('Error fetching product details:', error);
-            res.status(500).json({ message: 'Error fetching product details' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching product details' });
         }
     };
 
@@ -224,7 +223,7 @@
 
         uploadMultiple(req, res, async (err) => {
             if (err) {
-                return res.status(400).json({ message: err.message });
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: err.message });
             }
 
             try {
@@ -232,7 +231,7 @@
                 const existingProduct = await Product.findById(productId);
                 
                 if (!existingProduct) {
-                    return res.status(404).json({ message: 'Product not found' });
+                    return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'Product not found' });
                 }
 
                 const {
@@ -249,7 +248,7 @@
 
                 // Validate required fields
                 if (!productName || !brand || !categoriesId || !price || !stock) {
-                    return res.status(400).json({ message: 'All required fields must be filled' });
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'All required fields must be filled' });
                 }
 
                 // Validate product name and brand
@@ -258,7 +257,7 @@
                     validatedName = validateProductName(req.body.productName);
                     validatedBrand = validateBrand(req.body.brand);
                 } catch (validationError) {
-                    return res.status(400).json({ message: validationError.message });
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: validationError.message });
                 }
 
                 // Check for duplicate product name (excluding current product)
@@ -268,7 +267,7 @@
                 });
                 
                 if (existingProductName) {
-                    return res.status(400).json({ message: 'A product with this name already exists' });
+                    return res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'A product with this name already exists' });
                 }
 
                 // Handle image updates
@@ -331,7 +330,7 @@
                 }
                 
                 console.error('Error updating product:', error);
-                res.status(500).json({ message: 'Error updating product: ' + error.message });
+                res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Error updating product: ' + error.message });
             }
         });
     };
@@ -344,7 +343,7 @@
             // Find the product first to get the product ID
             const product = await Product.findById(productId);
             if (!product) {
-                return res.status(404).json({ message: 'Product not found' });
+                return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'Product not found' });
             }
 
             if (product.imageUrl) {
@@ -367,7 +366,7 @@
 
             res.status(HTTP_STATUS.OK).json({ message: 'Product deleted successfully' });
         } catch (error) {
-            res.status(500).json({ 
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ 
                 message: 'Error deleting product',
                 error: error.message 
             });
@@ -380,7 +379,7 @@
             const product = await Product.findById(req.params.id);
 
             if (!product) {
-                return res.status(404).json({ message: 'Product not found' });
+                return res.status(HTTP_STATUS.NOT_FOUND).json({ message: 'Product not found' });
             }
 
             product.isActive = !product.isActive;
@@ -392,7 +391,7 @@
             });
         } catch (error) {
             console.error('Error toggling product status:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
         }
     };
 
