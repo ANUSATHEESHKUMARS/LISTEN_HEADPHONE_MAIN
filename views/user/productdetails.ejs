@@ -28,9 +28,9 @@
         </nav>
 
         <!-- Product Details -->
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                     <!-- Left: Image Gallery -->
                     <div class="space-y-4">
                         <!-- Main Image -->
@@ -46,19 +46,19 @@
                                 <!-- Wishlist Button -->
                                 <button 
                                     onclick="toggleWishlist('<%= product._id %>', this)"
-                                    class="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:bg-white transition-all duration-300"
+                                    class="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-sm hover:bg-white transition-all duration-300"
                                 >
-                                    <i class="far fa-heart text-2xl text-gray-800 hover:text-red-500 transition-colors"></i>
+                                    <i class="far fa-heart text-xl sm:text-2xl text-gray-800 hover:text-red-500 transition-colors"></i>
                                 </button>
                             </div>
                         </div>
 
                         <!-- Thumbnails -->
-                        <div class="thumbnail-scroll flex space-x-4 overflow-x-auto py-2">
+                        <div class="thumbnail-scroll flex space-x-3 sm:space-x-4 overflow-x-auto py-2">
                             <% product.imageUrl.forEach((image, index) => { %>
                                 <button 
                                     onclick="updateMainImage('<%= image %>', this)"
-                                    class="thumbnail-btn flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 
+                                    class="thumbnail-btn flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 
                                            <%= index === 0 ? 'border-gray-900' : 'border-transparent' %> 
                                            hover:border-gray-900 transition-all"
                                 >
@@ -73,23 +73,23 @@
                     </div>
 
                     <!-- Right: Product Info -->
-                    <div class="space-y-6">
+                    <div class="space-y-4 sm:space-y-6">
                         <div>
-                            <h1 class="text-3xl font-bold text-gray-900"><%= product.productName %></h1>
-                            <p class="text-gray-500 mt-2"><%= product.description %></p>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900"><%= product.productName %></h1>
+                            <p class="text-gray-500 mt-2 text-sm sm:text-base"><%= product.description %></p>
                         </div>
 
                         <!-- Price -->
                         <div class="space-y-2">
-                            <div class="flex items-baseline gap-3">
-                                <span class="text-4xl font-bold text-gray-900">
+                            <div class="flex items-baseline gap-3 flex-wrap">
+                                <span class="text-3xl sm:text-4xl font-bold text-gray-900">
                                     ₹<%= Number(product.discountPrice || product.price).toLocaleString('en-IN') %>
                                 </span>
                                 <% if (product.discountPrice && product.originalPrice && product.discountPrice < product.originalPrice) { %>
-                                    <span class="text-xl text-gray-400 line-through">
+                                    <span class="text-lg sm:text-xl text-gray-400 line-through">
                                         ₹<%= Number(product.originalPrice).toLocaleString('en-IN') %>
                                     </span>
-                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                    <span class="bg-green-100 text-green-800 px-2 sm:px-3 py-1 rounded-full text-sm font-medium">
                                         <%= Math.round((product.originalPrice - product.discountPrice) / product.originalPrice * 100) %>% OFF
                                     </span>
                                 <% } %>
@@ -98,12 +98,12 @@
                         <!-- Stock Status -->
                         <div>
                             <% if (product.stock > 0) { %>
-                                <div class="text-green-600 flex items-center gap-2">
+                                <div class="text-green-600 flex items-center gap-2 text-sm sm:text-base">
                                     <i class="fas fa-check-circle"></i>
                                     <span>In Stock (<%= product.stock %> available)</span>
                                 </div>
                             <% } else { %>
-                                <div class="text-red-600 flex items-center gap-2">
+                                <div class="text-red-600 flex items-center gap-2 text-sm sm:text-base">
                                     <i class="fas fa-times-circle"></i>
                                     <span>Out of Stock</span>
                                 </div>
@@ -111,14 +111,14 @@
                         </div>
 
                         <!-- Product Details -->
-                        <div class="border-t border-gray-200 pt-6">
-                            <h3 class="text-lg font-semibold mb-4">Product Details</h3>
-                            <dl class="grid grid-cols-1 gap-4">
+                        <div class="border-t border-gray-200 pt-4 sm:pt-6">
+                            <h3 class="text-lg font-semibold mb-3 sm:mb-4">Product Details</h3>
+                            <dl class="grid grid-cols-1 gap-3 sm:gap-4">
                                 <div>
                                     <dt class="text-sm text-gray-500">Category</dt>
                                     <dd class="text-sm font-medium text-gray-900">
                                         <% if (product.categoriesId && product.categoriesId.name) { %>
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                            <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                                                 <%= product.categoriesId.name %>
                                             </span>
                                         <% } else { %>
@@ -130,7 +130,7 @@
                                     <dt class="text-sm text-gray-500">Type</dt>
                                     <dd class="text-sm font-medium text-gray-900">
                                         <% if (product.type) { %>
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                            <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                                                 <%= product.type %>
                                             </span>
                                         <% } else { %>
@@ -146,18 +146,18 @@
                         </div>
                         
                         <!-- Actions --> 
-                        <div class="space-y-4 pt-6">
+                        <div class="space-y-3 sm:space-y-4 pt-4 sm:pt-6">
                             <% if (product.stock > 0) { %>
                                 <button 
                                     onclick="addToCart('<%= product._id %>')"
-                                    class="w-full py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                                    class="w-full py-3 sm:py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                                 >
                                     <i class="fas fa-shopping-cart"></i>
                                     Add to Cart
                                 </button>
                                 <button 
                                     onclick="buyNow('<%= product._id %>')"
-                                    class="w-full py-4 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                                    class="w-full py-3 sm:py-4 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                                 >
                                     <i class="fas fa-bolt"></i>
                                     Buy Now
@@ -165,7 +165,7 @@
                             <% } %>
                             <button 
                                 onclick="toggleWishlist('<%= product._id %>', this)"
-                                class="w-full py-4 bg-white text-gray-900 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                                class="w-full py-3 sm:py-4 bg-white text-gray-900 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                             >
                                 <i class="far fa-heart"></i>
                                 Add to Wishlist
@@ -177,10 +177,10 @@
         </div>
 
         <!-- Related Products Section -->
-        <section class="max-w-7xl mx-auto px-4 mt-16 mb-12">
-            <h2 class="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16 mb-8 sm:mb-12">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Related Products</h2>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <% if (relatedProducts && relatedProducts.length > 0) { %>
                     <% relatedProducts.forEach(function(product) { %>
                         <div class="group relative">
@@ -191,25 +191,25 @@
                                         <img 
                                             src="<%= product.imageUrl[0] %>" 
                                             alt="<%= product.productName %>"
-                                            class="h-64 w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                                            class="h-48 sm:h-64 w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
                                         />
                                     </div>
                                 </a>
                                 
                                 <!-- Product Info -->
-                                <div class="p-4">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
+                                <div class="p-3 sm:p-4">
+                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
                                         <%= product.productName %>
                                     </h3>
                                     
                                     <div class="flex items-center justify-between">
-                                        <p class="text-xl font-bold text-gray-900">
+                                        <p class="text-lg sm:text-xl font-bold text-gray-900">
                                             ₹<%= Number(product.price).toLocaleString('en-IN') %>
                                         </p>
                                         
                                         <a 
                                             href="/product/<%= product._id %>"
-                                            class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                                            class="bg-gray-900 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
                                         >
                                             View Details
                                         </a>
@@ -452,8 +452,14 @@
             position: relative;
             overflow: hidden;
             cursor: zoom-in;
-            max-width: 600px;
+            max-width: 100%;
             margin: 0 auto;
+        }
+
+        @media (min-width: 640px) {
+            .main-image-container {
+                max-width: 600px;
+            }
         }
 
         #mainImage {
@@ -475,6 +481,15 @@
 
         .thumbnail:hover {
             transform: scale(1.05);
+        }
+
+        .thumbnail-scroll {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .thumbnail-scroll::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </body>

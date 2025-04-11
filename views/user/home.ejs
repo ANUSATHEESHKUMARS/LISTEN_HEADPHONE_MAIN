@@ -13,117 +13,93 @@
     <%- include("../partials/nav") %>
 
     <!-- Hero Section -->
-    <section class="absolute mt-16">
-
+    <section class="relative mt-16">
         <!-- Mobile Hero (visible only on small screens) -->
         <div class="sm:hidden">
-            <div class="relative h-[60vh] mybg-green">
-                <!-- Mobile Content -->
-                <div class="container mx-auto px-4 h-full flex flex-col justify-center">
-                    <span class="text-gray-300 text-sm tracking-wider mb-4">welcome to Listen</span>
-                    <h1 class="text-3xl font-bold text-white opacity-25 mb-4">
-                        are you lookin for  Headphones
-                      </h1>
-                      
-                    <p class="text-gray-200 text-base mb-6 max-w-lg">Explore our collection of premium watches for every occasion</p>
+            <div class="relative h-[60vh] bg-gradient-to-b from-gray-900 to-gray-800">
+                <img src="/images/firstpic.jpg" alt="Premium Headphones" class="absolute inset-0 w-full h-full object-cover opacity-50" />
+                <div class="container mx-auto px-4 h-full flex flex-col justify-center relative z-10">
+                    <span class="text-gray-300 text-sm tracking-wider mb-4">Welcome to Listen</span>
+                    <h1 class="text-3xl font-bold text-white mb-4">
+                        Premium Headphones for Every Lifestyle
+                    </h1>
+                    <p class="text-gray-200 text-base mb-6 max-w-lg">Discover our collection of high-quality headphones designed for music lovers, gamers, and professionals</p>
                     <div class="flex gap-3">
                         <a href="/shop" class="bg-white text-gray-900 px-6 py-2.5 rounded-lg hover:bg-gray-100 transition-colors text-sm flex-1 text-center">Shop Now</a>
                         <a href="#featured" class="border border-white text-white px-6 py-2.5 rounded-lg hover:bg-white/10 transition-colors text-sm flex-1 text-center">View Featured</a>
                     </div>
                 </div>
-                <!-- Decorative Elements -->
-                <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-                <div class="absolute top-4 right-4 w-24 h-24 opacity-10">
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                </div>
             </div>
         </div>
 
-
-
-    <!-- Desktop Hero (hidden on small screens) -->
-<div class="hidden sm:block h-[70vh] relative overflow-hidden">
-    <div class="flex transition-transform duration-500" id="carousel">
-        <div class="min-w-full">
-            <img src="/images/firstpic.jpg" alt="Royal headphones" class="w-full h-[80vh] object-cover object-center" />
-            <div class="absolute inset-0 bg-gradient-to-l from-black/70 via-black/50 to-transparent">
-                <div class="container mx-auto px-4 h-full flex items-center sm:justify-end">
-                    <div class="max-w-2xl mx-4 sm:mx-0">
-                        <span class="text-gray-300 text-sm tracking-wider mb-4 block">welcome to Listen</span>
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">are you lookin for  Headphones</h1>
-                        <p class="text-gray-200 text-lg mb-8 max-w-lg">Explore our collection of premium watches for every occasion</p>
-                        <div class="flex gap-4">
-                            <a href="/shop" class="bg-white text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors">Shop Now</a>
-                            <a href="#featured" class="border border-white text-white px-8 py-3 rounded-lg hover:bg-white/10 transition-colors">View Featured</a>
+        <!-- Desktop Hero (hidden on small screens) -->
+        <div class="hidden sm:block h-[70vh] relative overflow-hidden">
+            <div class="flex transition-transform duration-500 ease-in-out" id="carousel">
+                <div class="min-w-full relative">
+                    <img src="/images/firstpic.jpg" alt="Premium Headphones" class="w-full h-[80vh] object-cover object-center" />
+                    <div class="absolute inset-0 bg-gradient-to-l from-black/70 via-black/50 to-transparent">
+                        <div class="container mx-auto px-4 h-full flex items-center sm:justify-end">
+                            <div class="max-w-2xl mx-4 sm:mx-0">
+                                <span class="text-gray-300 text-sm tracking-wider mb-4 block">Welcome to Listen</span>
+                                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">Premium Headphones for Every Lifestyle</h1>
+                                <p class="text-gray-200 text-lg mb-8 max-w-lg">Discover our collection of high-quality headphones designed for music lovers, gamers, and professionals</p>
+                                <div class="flex gap-4">
+                                    <a href="/shop" class="bg-white text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors">Shop Now</a>
+                                    <a href="#featured" class="border border-white text-white px-8 py-3 rounded-lg hover:bg-white/10 transition-colors">View Featured</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="min-w-full relative">
+                    <img src="/images/laptop.jpg" alt="Wireless Headphones" class="w-full h-[80vh] object-cover object-center" />
+                    <div class="absolute inset-0 bg-gradient-to-l from-black/70 via-black/50 to-transparent">
+                        <div class="container mx-auto px-4 h-full flex items-center sm:justify-end">
+                            <div class="max-w-2xl mx-4 sm:mx-0">
+                                <span class="text-gray-300 text-sm tracking-wider mb-4 block">Welcome to Listen</span>
+                                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">Wireless Freedom, Premium Sound</h1>
+                                <p class="text-gray-200 text-lg mb-8 max-w-lg">Experience crystal-clear audio with our latest wireless headphone collection</p>
+                                <div class="flex gap-4">
+                                    <a href="/shop" class="bg-white text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors">Shop Now</a>
+                                    <a href="#featured" class="border border-white text-white px-8 py-3 rounded-lg hover:bg-white/10 transition-colors">View Featured</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="min-w-full relative">
+                    <img src="/images/girl23.jpg" alt="Noise Cancelling Headphones" class="w-full h-[80vh] object-cover object-center" />
+                    <div class="absolute inset-0 bg-gradient-to-l from-black/70 via-black/50 to-transparent">
+                        <div class="container mx-auto px-4 h-full flex items-center sm:justify-end">
+                            <div class="max-w-2xl mx-4 sm:mx-0">
+                                <span class="text-gray-300 text-sm tracking-wider mb-4 block">Welcome to Listen</span>
+                                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">Immersive Sound Experience</h1>
+                                <p class="text-gray-200 text-lg mb-8 max-w-lg">Dive into your favorite music with our noise-cancelling headphones</p>
+                                <div class="flex gap-4">
+                                    <a href="/shop" class="bg-white text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors">Shop Now</a>
+                                    <a href="#featured" class="border border-white text-white px-8 py-3 rounded-lg hover:bg-white/10 transition-colors">View Featured</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="min-w-full">
-            <img src="/images/laptop.jpg" alt="Banner 2" class="w-full h-[80vh] object-cover object-center" />
-            <div class="absolute inset-0 bg-gradient-to-l from-black/70 via-black/50 to-transparent">
-                <div class="container mx-auto px-4 h-full flex items-center sm:justify-end">
-                    <div class="max-w-2xl mx-4 sm:mx-0">
-                        <span class="text-gray-300 text-sm tracking-wider mb-4 block">welcome to Listen</span>
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">are you lookin for  Headphones</h1>
-                        <p class="text-gray-200 text-lg mb-8 max-w-lg">Explore our collection of premium watches for every occasion</p>
-                        <div class="flex gap-4">
-                            <a href="/shop" class="bg-white text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors">Shop Now</a>
-                            <a href="#featured" class="border border-white text-white px-8 py-3 rounded-lg hover:bg-white/10 transition-colors">View Featured</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="min-w-full">
-            <img src="/images/girl23.jpg" alt="Banner 3" class="w-full h-[80vh] object-cover object-center" />
-            <div class="absolute inset-0 bg-gradient-to-l from-black/70 via-black/50 to-transparent">
-                <div class="container mx-auto px-4 h-full flex items-center sm:justify-end">
-                    <div class="max-w-2xl mx-4 sm:mx-0">
-                        <span class="text-gray-300 text-sm tracking-wider mb-4 block">welcome to Listen</span>
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">are you looking for  Headphones</h1>
-                        <p class="text-gray-200 text-lg mb-8 max-w-lg">Explore our collection of premium watches for every occasion</p>
-                        <div class="flex gap-4">
-                            <a href="/shop" class="bg-white text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors">Shop Now</a>
-                            <a href="#featured" class="border border-white text-white px-8 py-3 rounded-lg hover:bg-white/10 transition-colors">View Featured</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    </section>
 
-
-    <!-- Categories Section - Compact -->
+    <!-- Categories Section -->
     <section class="bg-black py-8">
         <div class="container mx-auto px-4">
-            <!-- Section Header -->
             <div class="text-center mb-8">
                 <h2 class="text-2xl font-bold text-gray-200 mb-2">Shop by Category</h2>
                 <p class="text-gray-200">Find your perfect headphones</p>
             </div>
 
-            <!-- Category Cards - Compact -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
-                <!-- Wireless Headphones Card -->
-                <a href="/shop?type=wireless" 
-                   class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                <!-- Category Cards -->
+                <a href="/shop?type=wireless" class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
                     <div class="h-48">
-                        <img src="/images/this si pagae.jpg.png" 
-                             alt="Wireless Headphones" 
-                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                        <img src="/images/this si pagae.jpg.png" alt="Wireless Headphones" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
                         <div class="absolute bottom-0 left-0 right-0 p-4">
@@ -138,13 +114,9 @@
                     </div>
                 </a>
 
-                <!-- Wired Headphones Card -->
-                <a href="/shop?type=wired" 
-                   class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                <a href="/shop?type=wired" class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
                     <div class="h-48">
-                        <img src="/images/IMAGE.JPG.png" 
-                             alt="Wired Headphones" 
-                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                        <img src="/images/IMAGE.JPG.png" alt="Wired Headphones" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
                         <div class="absolute bottom-0 left-0 right-0 p-4">
@@ -221,7 +193,6 @@
     <!-- Featured Products -->
     <section id="featured" class="py-16 bg-black">
         <div class="container mx-auto px-4">
-            <!-- Section Header -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 sm:mb-12">
                 <div class="mb-4 sm:mb-0">
                     <div class="flex items-center gap-2 mb-2">
@@ -305,10 +276,10 @@
         </div>
     </section>
 
+    <!-- About Section -->
     <section id="about" class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
-                <!-- Section Header -->
                 <div class="text-center mb-12">
                     <div class="flex items-center justify-center gap-2 mb-2">
                         <span class="w-8 h-[2px] bg-gray-900"></span>
@@ -318,7 +289,6 @@
                     <h2 class="text-3xl sm:text-4xl font-bold text-gray-900">Powerful Sound Drivers Headphones</h2>
                 </div>
 
-                <!-- Content -->
                 <div class="prose prose-lg mx-auto text-gray-100">
                     <div class="bg-gray-900 rounded-2xl p-8 shadow-sm">
                         <h3 class="text-2xl font-bold text-gray-900 mb-6">Clear HD Sound Experience</h3>
@@ -326,43 +296,66 @@
                             Immerse yourself in a range of Hammer headphones that are designed ergonomically, especially for you!
                             Our selection of headphones comes with powerful sound drivers that are designed to deliver
                             crystal-clear HD sound, providing an immersive listening experience across various genres of music,
-                            movies, and gaming. The combination of large drivers and high-quality materials in Hammer headphones
-                            results in exceptional audio quality with utmost clarity and accuracy, allowing you to hear every
-                            nuance in your music or audio content.
+                            movies, and gaming.
                         </p>
                         <p class="mb-6">
                             Our Headphones with powerful sound are often equipped with large audio drivers, typically around 40mm
                             or larger. If you like to enjoy bass-heavy music genres like EDM or hip-hop, then our headphones with
                             powerful drivers that deliver deep, punchy bass without overwhelming the rest of the audio spectrum,
-                            are a perfect pick. While emphasizing powerful bass, Hammer high-quality headphones maintain a
-                            balanced sound signature, ensuring that all frequencies are well-represented for a natural and
-                            immersive listening experience.
+                            are a perfect pick.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <script>
-        let currentIndex = 0;
-        const slides = document.querySelectorAll('#carousel > div');
-        const totalSlides = slides.length;
-    
-        function showSlide(index) {
-            const offset = -index * 100;
-            document.getElementById('carousel').style.transform = `translateX(${offset}%)`;
-        }
-    
-        function nextSlide() {
-            currentIndex = (currentIndex + 1) % totalSlides;
-            showSlide(currentIndex);
-        }
-    
-        // Automatically slide every 3 seconds
-        setInterval(nextSlide, 3000);
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentIndex = 0;
+            const carousel = document.getElementById('carousel');
+            const slides = document.querySelectorAll('#carousel > div');
+            const totalSlides = slides.length;
+            let slideInterval;
+
+            function showSlide(index) {
+                if (index < 0) {
+                    currentIndex = totalSlides - 1;
+                } else if (index >= totalSlides) {
+                    currentIndex = 0;
+                } else {
+                    currentIndex = index;
+                }
+                const offset = -currentIndex * 100;
+                carousel.style.transform = `translateX(${offset}%)`;
+            }
+
+            function nextSlide() {
+                showSlide(currentIndex + 1);
+            }
+
+            function startSlideShow() {
+                slideInterval = setInterval(nextSlide, 5000);
+            }
+
+            function stopSlideShow() {
+                clearInterval(slideInterval);
+            }
+
+            // Start the slideshow
+            startSlideShow();
+
+            // Pause on hover
+            carousel.addEventListener('mouseenter', stopSlideShow);
+            carousel.addEventListener('mouseleave', startSlideShow);
+
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', function() {
+                clearInterval(slideInterval);
+            });
+        });
     </script>
 
+    <%- include("../partials/footer") %>
 </body>
 </html>
-```
-<%- include("../partials/footer") %>
